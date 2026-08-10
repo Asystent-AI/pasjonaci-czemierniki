@@ -1,11 +1,119 @@
 {{ define "main" }}
-{{ with .Params.hero }}
-<div class="hero">
-  <img src="{{ printf "/zdjecia/%s.webp" . }}" alt="{{ $.Params.heroAlt }}" width="1600" height="1200" fetchpriority="high">
-  <img class="hero-logo" src="/godlo.webp" alt="Godło Klubu Pasjonatów Ogrodnictwa Czemierniki" width="150" height="150">
-</div>
-{{ end }}
-<div class="srodek">
-  {{ .Content }}
-</div>
+
+<section class="bohater">
+  <div class="szeroko">
+    <div>
+      <h1>Masz ogród, działkę albo <em>balkon</em>?</h1>
+      <p class="zajawka">Jesteśmy klubem ogrodników z gminy Czemierniki. Spotykamy się co miesiąc,
+      wymieniamy sadzonkami i odwiedzamy swoje ogrody. <strong>Udział bezpłatny, nie trzeba
+      należeć do KGW.</strong></p>
+      <div class="przyciski">
+        <a class="przycisk przycisk-duzy" href="/dolacz/">Dołącz do Klubu</a>
+        <a class="przycisk przycisk-2 przycisk-duzy" href="/konkurs/">Konkurs na ogród 2026</a>
+      </div>
+    </div>
+    <div class="bohater-foto">
+      <img src="/zdjecia/ogrod-zloty-d.webp" srcset="/zdjecia/ogrod-zloty-m.webp 800w, /zdjecia/ogrod-zloty-d.webp 1600w"
+        sizes="(max-width: 760px) 92vw, 42vw" width="1600" height="1202"
+        alt="Uczestnicy lipcowego pleneru Klubu w ogrodzie pełnym kwiatów, w złotym świetle wieczoru" fetchpriority="high">
+      <p class="bohater-plakietka"><b>20+</b> osób na lipcowym plenerze Klubu</p>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja" aria-label="Najważniejsze fakty">
+  <div class="szeroko fakty-kafle">
+    <div class="kafel kafel-f odslon"><b>Honorowy Patronat</b><span>Burmistrza Gminy Czemierniki nad konkursem ogrodniczym</span></div>
+    <div class="kafel kafel-z odslon"><b>2.000 zł</b><span>wartość nagród ufundowanych przez Szkółkę Roślin Ozdobnych Ania</span></div>
+    <div class="kafel kafel-k odslon"><b>22 sierpnia 2026</b><span>finał konkursu na scenie Dożynek Gminno-Parafialnych</span></div>
+  </div>
+</section>
+
+<section class="sekcja sekcja-z">
+  <div class="szeroko">
+    <div class="sekcja-naglowek">
+      <h2>Co robimy w Klubie</h2>
+      <p>Nie trzeba się znać na ogrodnictwie. Wystarczy, że lubisz rośliny, resztą podzielimy się sami.</p>
+    </div>
+    <div class="karty">
+      <a class="karta odslon" href="/dolacz/">
+        <img src="/zdjecia/rozmowy-m.webp" width="800" height="601" loading="lazy" alt="Klubowicze rozmawiają w ogrodzie podczas spotkania">
+        <div><h3>Spotykamy się co miesiąc</h3><p>Rozmowy o roślinach, poradach i planach, zawsze przy czymś dobrym.</p></div>
+      </a>
+      <a class="karta odslon" href="/dolacz/">
+        <img src="/zdjecia/jezowki-m.webp" width="800" height="1065" loading="lazy" alt="Kwitnące jeżówki w wieczornym słońcu">
+        <div><h3>Wymieniamy się roślinami</h3><p>Sadzonki, nasiona i cebulki krążą między nami za darmo.</p></div>
+      </a>
+      <a class="karta odslon" href="/dolacz/">
+        <img src="/zdjecia/spacer-rabata-m.webp" width="800" height="601" loading="lazy" alt="Grupa zwiedza rabaty podczas pleneru w ogrodzie">
+        <div><h3>Odwiedzamy swoje ogrody</h3><p>Plenery w ogrodach członków to najlepsza lekcja ogrodnictwa.</p></div>
+      </a>
+      <a class="karta odslon" href="/konkurs/">
+        <img src="/zdjecia/jezowki-ludzie-m.webp" width="800" height="601" loading="lazy" alt="Uczestnicy pleneru wśród rabat z jeżówkami">
+        <div><h3>Prowadzimy konkurs ogrodowy</h3><p>Najpiękniejszy Ogród Gminy Czemierniki, z nagrodami i finałem na Dożynkach.</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja">
+  <div class="pas">
+    <div>
+      <div>
+        <h2>Zgłoś swój ogród do konkursu</h2>
+        <p>Trwa pierwsza edycja konkursu <b>Najpiękniejszy Ogród Gminy Czemierniki</b>.
+        Temat: „Ogród przyjazny naturze". Zgłoszenia przyjmujemy do <b>niedzieli 16 sierpnia</b>,
+        także online, prosto z tej strony.</p>
+      </div>
+      <a class="przycisk przycisk-duzy" href="/konkurs/#zgloszenie">Wyślij zgłoszenie</a>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja">
+  <div class="szeroko">
+    <div class="sekcja-naglowek">
+      <h2>Tak wyglądają nasze spotkania</h2>
+      <p>Zdjęcia z lipcowego pleneru w ogrodach członków Klubu.</p>
+    </div>
+    <div class="galeria" id="galeria">
+      <a href="/zdjecia/tecza-d.webp" class="g-szer"><img src="/zdjecia/tecza-m.webp" width="800" height="601" loading="lazy" alt="Tęcza nad ogrodem podczas lipcowego pleneru"></a>
+      <a href="/zdjecia/zadrzechnia-d.webp" class="g-wys"><img src="/zdjecia/zadrzechnia-m.webp" width="800" height="1065" loading="lazy" alt="Zadrzechnia fioletowa na kwiecie przetacznika, fiolet i zieleń jak w naszym logo"></a>
+      <a href="/zdjecia/palenisko-d.webp"><img src="/zdjecia/palenisko-m.webp" width="800" height="601" loading="lazy" alt="Ogrodowe palenisko otoczone rabatami"></a>
+      <a href="/zdjecia/ogrod-zloty-2-d.webp"><img src="/zdjecia/ogrod-zloty-2-m.webp" width="800" height="601" loading="lazy" alt="Rozmowy przy rabatach w złotym świetle"></a>
+      <a href="/zdjecia/aleja-formy-d.webp"><img src="/zdjecia/aleja-formy-m.webp" width="800" height="601" loading="lazy" alt="Aleja strzyżonych drzew w przydomowym ogrodzie"></a>
+      <a href="/zdjecia/niebo-spacer-d.webp"><img src="/zdjecia/niebo-spacer-m.webp" width="800" height="601" loading="lazy" alt="Spacer po ogrodzie pod dramatycznym niebem"></a>
+      <a href="/zdjecia/hustawka-d.webp" class="g-szer"><img src="/zdjecia/hustawka-m.webp" width="800" height="601" loading="lazy" alt="Ogród z huśtawką i rabatami traw"></a>
+      <a href="/zdjecia/koty-d.webp" class="g-szer"><img src="/zdjecia/koty-m.webp" width="800" height="601" loading="lazy" alt="Dwa koty odpoczywają na kamieniach w odwiedzanym ogrodzie"></a>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja sekcja-f">
+  <div class="szeroko">
+    <div class="sekcja-naglowek">
+      <h2>Wspierają nas</h2>
+      <p>Konkurs i działania Klubu są możliwe dzięki ludziom i firmom z naszej gminy.</p>
+    </div>
+    <div class="partnerzy">
+      <div class="partner odslon">
+        <span class="rola">Honorowy Patronat</span>
+        <h3>Burmistrz Gminy Czemierniki</h3>
+        <p>Arkadiusz Filipek objął Honorowym Patronatem konkurs Najpiękniejszy Ogród Gminy Czemierniki 2026.</p>
+      </div>
+      <div class="partner odslon">
+        <span class="rola">Fundator nagród</span>
+        <h3>Szkółka Roślin Ozdobnych Ania</h3>
+        <p>Vouchery o wartości 2.000 zł na nagrody dla laureatów. Właścicielka zasiada w komisji konkursowej.</p>
+      </div>
+      <div class="partner odslon">
+        <span class="rola">Komisja konkursowa</span>
+        <h3>Kwiaciarnia Flowers</h3>
+        <p>Barbara Jul-Borkowska wspiera konkurs swoim doświadczeniem w komisji konkursowej.</p>
+      </div>
+    </div>
+    <p style="margin-top:1.6rem"><a class="przycisk przycisk-2" href="/sponsorzy/">Zobacz, co dajemy partnerom</a></p>
+  </div>
+</section>
+
 {{ end }}

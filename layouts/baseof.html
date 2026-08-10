@@ -3,15 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} — {{ site.Title }}{{ end }}</title>
+<title>{{ if .IsHome }}{{ site.Title }} Czemierniki{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
-<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }} Czemierniki{{ else }}{{ .Title }}{{ end }}">
 <meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ "og.jpg" | absURL }}">
+<meta property="og:locale" content="pl_PL">
 <link rel="icon" sizes="32x32" href="{{ "favicon-32.png" | relURL }}">
 <link rel="apple-touch-icon" href="{{ "favicon.png" | relURL }}">
-<meta property="og:image" content="{{ "logo.webp" | absURL }}">
+<link rel="preload" href="/fonty/bricolage-grotesque-v9-latin_latin-ext-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonty/manrope-v20-latin_latin-ext-regular.woff2" as="font" type="font/woff2" crossorigin>
 {{ with resources.Get "css/main.css" }}{{ $c := . | fingerprint }}<link rel="stylesheet" href="{{ $c.RelPermalink }}">{{ end }}
 {{ with site.Params.umami }}<script defer src="{{ . }}" data-website-id="{{ site.Params.umamiId }}"></script>{{ end }}
 </head>
@@ -19,10 +22,15 @@
 
 <header class="gora">
   <div class="szeroko">
-    <a href="{{ "/" | relURL }}"><img class="godlo" src="{{ "godlo.webp" | relURL }}" alt="" width="52" height="52"></a>
-    <a href="{{ "/" | relURL }}" class="marka">Klub Pasjonatów Ogrodnictwa<br><small>Czemierniki</small></a>
-    <nav class="menu">
-      {{ range site.Menus.main }}<a href="{{ .PageRef | relURL }}">{{ .Name }}</a>{{ end }}
+    <a href="/" aria-label="Strona główna Klubu"><img class="godlo" src="{{ "odznaka-240.webp" | relURL }}" alt="" width="50" height="50"></a>
+    <a href="/" class="marka">Klub Pasjonatów Ogrodnictwa<small>Czemierniki</small></a>
+    <button class="menu-guzik" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="menu" id="menu">
+      {{ $tu := .RelPermalink }}
+      {{ range site.Menus.main }}<a href="{{ .PageRef | relURL }}"{{ if eq ($.RelPermalink) (.PageRef | relURL) }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+      <a class="przycisk" href="/dolacz/">Dołącz do Klubu</a>
     </nav>
   </div>
 </header>
@@ -32,15 +40,35 @@
 </main>
 
 <footer class="dol">
-  <div class="szeroko">
-    <p><strong>Koło Gospodyń Wiejskich Czemierniki</strong><br>
-    ul. Zamkowa 11, 21-306 Czemierniki<br>
-    KRKGW 0615030001 · NIP 5381859198 · REGON 382093920</p>
-    <p class="tel"><a href="tel:+48795716644">{{ site.Params.telefon }}</a></p>
-    <p><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a> ·
-       <a href="{{ site.Params.facebook }}">Jesteśmy na Facebooku</a></p>
+  <div class="szeroko dol-siatka">
+    <div class="o-klubie">
+      <img src="{{ "odznaka-240.webp" | relURL }}" alt="Odznaka Klubu Pasjonatów Ogrodnictwa Czemierniki" width="84" height="84" loading="lazy">
+      <p>Klub Pasjonatów Ogrodnictwa to otwarta inicjatywa przy Kole Gospodyń Wiejskich
+      Czemierniki. Spotkania, plenery, wymiany roślin i konkursy. Udział jest bezpłatny
+      i nie wymaga członkostwa w KGW.</p>
+    </div>
+    <div>
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="tel:+48795716644">{{ site.Params.telefon }}</a></li>
+        <li><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></li>
+        <li><a href="{{ site.Params.facebook }}" rel="noopener">Profil KGW na Facebooku</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Koło Gospodyń Wiejskich Czemierniki</h4>
+      <p class="dane">ul. Zamkowa 11, 21-306 Czemierniki<br>
+      KRKGW 0615030001<br>NIP 5381859198 · REGON 382093920</p>
+    </div>
+  </div>
+  <div class="dol-pasek">
+    <div class="szeroko">
+      <span>© 2026 Koło Gospodyń Wiejskich Czemierniki</span>
+      <span><a href="/konkurs/">Konkurs 2026</a> · <a href="/sponsorzy/">Dla sponsorów</a> · <a href="/dolacz/">Dołącz</a></span>
+    </div>
   </div>
 </footer>
 
+<script src="{{ "js/strona.js" | relURL }}" defer></script>
 </body>
 </html>

@@ -24,7 +24,3 @@ enableRobotsTXT = true
     name = 'Dla sponsorów'
     pageRef = '/sponsorzy'
     weight = 20
-  [[menus.main]]
-    name = 'Dołącz do Klubu'
-    pageRef = '/dolacz'
-    weight = 30
