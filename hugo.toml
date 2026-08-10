@@ -1,0 +1,30 @@
+baseURL = 'https://pasjonaci.czemierniki.org/'
+languageCode = 'pl-pl'
+defaultContentLanguage = 'pl'
+title = 'Klub Pasjonatów Ogrodnictwa'
+enableRobotsTXT = true
+
+[params]
+  opis = 'Klub Pasjonatów Ogrodnictwa przy Kole Gospodyń Wiejskich Czemierniki. Spotkania, plenery i konkursy. Udział bezpłatny.'
+  telefon = '795 716 644'
+  email = 'kgw.czemierniki@gmail.com'
+  facebook = 'https://facebook.com/kgw.czemierniki'
+  # umami = 'https://statystyki.czemierniki.org/script.js'   # odkomentuj po wdrożeniu Umami
+  # umamiId = ''
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[menus]
+  [[menus.main]]
+    name = 'Konkurs 2026'
+    pageRef = '/konkurs'
+    weight = 10
+  [[menus.main]]
+    name = 'Dla sponsorów'
+    pageRef = '/sponsorzy'
+    weight = 20
+  [[menus.main]]
+    name = 'Dołącz do Klubu'
+    pageRef = '/dolacz'
+    weight = 30

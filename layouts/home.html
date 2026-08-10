@@ -1,0 +1,11 @@
+{{ define "main" }}
+{{ with .Params.hero }}
+<div class="hero">
+  <img src="{{ printf "/zdjecia/%s.webp" . }}" alt="{{ $.Params.heroAlt }}" width="1600" height="1200" fetchpriority="high">
+  <img class="hero-logo" src="/godlo.webp" alt="Godło Klubu Pasjonatów Ogrodnictwa Czemierniki" width="150" height="150">
+</div>
+{{ end }}
+<div class="srodek">
+  {{ .Content }}
+</div>
+{{ end }}

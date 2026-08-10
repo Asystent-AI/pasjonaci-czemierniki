@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} — {{ site.Title }}{{ end }}</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<link rel="icon" sizes="32x32" href="{{ "favicon-32.png" | relURL }}">
+<link rel="apple-touch-icon" href="{{ "favicon.png" | relURL }}">
+<meta property="og:image" content="{{ "logo.webp" | absURL }}">
+{{ with resources.Get "css/main.css" }}{{ $c := . | fingerprint }}<link rel="stylesheet" href="{{ $c.RelPermalink }}">{{ end }}
+{{ with site.Params.umami }}<script defer src="{{ . }}" data-website-id="{{ site.Params.umamiId }}"></script>{{ end }}
+</head>
+<body>
+
+<header class="gora">
+  <div class="szeroko">
+    <a href="{{ "/" | relURL }}"><img class="godlo" src="{{ "godlo.webp" | relURL }}" alt="" width="52" height="52"></a>
+    <a href="{{ "/" | relURL }}" class="marka">Klub Pasjonatów Ogrodnictwa<br><small>Czemierniki</small></a>
+    <nav class="menu">
+      {{ range site.Menus.main }}<a href="{{ .PageRef | relURL }}">{{ .Name }}</a>{{ end }}
+    </nav>
+  </div>
+</header>
+
+<main>
+{{ block "main" . }}{{ end }}
+</main>
+
+<footer class="dol">
+  <div class="szeroko">
+    <p><strong>Koło Gospodyń Wiejskich Czemierniki</strong><br>
+    ul. Zamkowa 11, 21-306 Czemierniki<br>
+    KRKGW 0615030001 · NIP 5381859198 · REGON 382093920</p>
+    <p class="tel"><a href="tel:+48795716644">{{ site.Params.telefon }}</a></p>
+    <p><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a> ·
+       <a href="{{ site.Params.facebook }}">Jesteśmy na Facebooku</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

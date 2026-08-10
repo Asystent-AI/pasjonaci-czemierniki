@@ -1,0 +1,130 @@
+/* Tokeny: paleta z policzonymi kontrastami WCAG, skala Utopia, baza 18px */
+:root {
+  --krem: #FDFBF6;
+  --tekst: #212A26;          /* 14.26:1 na kremie — AAA */
+  --zielen-ciemna: #1B4332;  /* biały tekst 11.08:1 — AAA */
+  --zielen: #2D6A4F;         /* biały 6.39:1 — AA; na kremie 6.18:1 — AA */
+  --miod: #B45309;           /* biały 5.02:1 — AA; główne wezwanie do działania */
+  --terakota: #9A3412;       /* biały 7.31:1 — AAA */
+  --zielen-dekor: #40916C;   /* 3.83:1 — TYLKO dekoracja, nigdy tekst */
+  --linia: #E3DED2;
+
+  --font-naglowki: 'Fraunces', Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+  --font-tekst: 'Nunito Sans', Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', sans-serif;
+
+  --step--1: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
+  --step-0:  clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --step-1:  clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem);
+  --step-2:  clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem);
+  --step-3:  clamp(1.944rem, 1.771rem + 0.865vw, 2.4414rem);
+  --step-4:  clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
+
+  --s: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --m: clamp(1.6875rem, 1.6223rem + 0.3261vw, 1.875rem);
+  --l: clamp(2.25rem, 2.163rem + 0.4348vw, 2.5rem);
+  --xl: clamp(3.375rem, 3.2446rem + 0.6522vw, 3.75rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--krem);
+  color: var(--tekst);
+  font: 400 var(--step-0)/1.6 var(--font-tekst);
+  -webkit-text-size-adjust: 100%;
+}
+img { max-width: 100%; height: auto; display: block; }
+
+h1, h2, h3 { font-family: var(--font-naglowki); line-height: 1.15; color: var(--zielen-ciemna); margin: 0 0 var(--s); }
+h1 { font-size: var(--step-4); font-weight: 600; }
+h2 { font-size: var(--step-3); margin-top: var(--l); }
+h3 { font-size: var(--step-2); margin-top: var(--m); }
+p, ul, ol { margin: 0 0 var(--s); }
+a { color: var(--zielen); }
+
+.srodek { width: min(100% - 2.5rem, 65ch); margin-inline: auto; }
+.szeroko { width: min(100% - 2.5rem, 60rem); margin-inline: auto; }
+
+/* Nagłówek strony */
+header.gora { background: var(--zielen-ciemna); color: #fff; padding: 0.7rem 0; }
+header.gora a { color: #fff; text-decoration: none; }
+header.gora .marka { font-family: var(--font-naglowki); font-size: var(--step-0); font-weight: 600; display: block; line-height: 1.2; }
+header.gora .marka small { font-size: 0.72em; opacity: .8; letter-spacing: .08em; }
+nav.menu { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+nav.menu a { min-height: 48px; display: flex; align-items: center; padding: 0 0.85rem; border: 1px solid rgba(255,255,255,.35); border-radius: 6px; font-size: var(--step--1); }
+@media (min-width: 45rem) { header.gora .marka { font-size: var(--step-1); } }
+
+/* Przyciski: 48px to minimum dla kciuka, nie 24px z normy */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0.6rem 1.5rem;
+  background: var(--miod); color: #fff; text-decoration: none;
+  border-radius: 8px; font-weight: 700; border: 0;
+}
+.btn-2 { background: var(--zielen); }
+.btn + .btn { margin-top: 0.75rem; }
+@media (min-width: 30rem) { .btn + .btn { margin: 0 0 0 0.75rem; } }
+
+/* Blok terminów */
+.fakty { list-style: none; padding: var(--m); margin: var(--m) 0; background: #fff; border: 1px solid var(--linia); border-radius: 12px; }
+.fakty li { display: flex; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--linia); }
+.fakty li:last-child { border: 0; padding-bottom: 0; }
+.fakty b { font-family: var(--font-naglowki); color: var(--zielen-ciemna); }
+
+/* Wielka liczba — element wizualny bez wykresów i bez JS */
+.liczba { font-family: var(--font-naglowki); font-size: var(--step-4); font-weight: 600; color: var(--terakota); line-height: 1; }
+
+.uwaga { border-left: 5px solid var(--miod); padding: var(--s) var(--m); background: #fff; border-radius: 0 8px 8px 0; }
+
+footer.dol { background: var(--zielen-ciemna); color: #fff; margin-top: var(--xl); padding: var(--l) 0; }
+footer.dol a { color: #fff; }
+footer.dol .tel { font-size: var(--step-1); font-weight: 700; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: filter 150ms cubic-bezier(0.2, 0, 0, 1); }
+  .btn:hover { filter: brightness(1.1); }
+}
+
+/* --- Hero na stronie głównej ---
+   Na telefonie liczy się pierwszy ekran: hero jest niski, a godło ukryte,
+   bo i tak stoi w nagłówku. Ozdoba nie może spychać nagłówka pod krawędź. */
+.hero { position: relative; margin-bottom: var(--m); }
+.hero > img:first-child { width: 100%; max-height: 34vh; object-fit: cover; }
+.hero-logo { display: none; }
+@media (min-width: 45rem) {
+  .hero > img:first-child { max-height: 60vh; }
+  .hero-logo {
+    display: block;
+    position: absolute; left: 50%; bottom: -62px; transform: translateX(-50%);
+    width: 150px; height: 150px; border-radius: 50%;
+    background: var(--krem); padding: 8px; box-shadow: 0 4px 18px rgba(27,67,50,.28);
+  }
+  .hero + .srodek { padding-top: 82px; }
+}
+
+/* --- Galeria: jedna kolumna na telefonie, dwie od tabletu --- */
+.galeria { display: grid; gap: 0.75rem; margin: var(--m) 0; }
+@media (min-width: 34rem) { .galeria { grid-template-columns: 1fr 1fr; } }
+.galeria img { width: 100%; height: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 10px; }
+
+/* --- Nagłówek: godło obok nazwy --- */
+header.gora .szeroko { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+header.gora .godlo { width: 52px; height: 52px; flex: none; }
+header.gora nav.menu { width: 100%; }
+
+.tel-duzy { font-family: var(--font-naglowki); font-size: var(--step-2); font-weight: 700; margin: 0 0 0.35rem; }
+.tel-duzy a { color: var(--terakota); text-decoration: none; }
+.druk-info { font-size: var(--step--1); color: #5b6560; }
+
+/* --- Wydruk oferty do PDF: sponsor dostaje kartkę, nie zrzut ekranu --- */
+@media print {
+  header.gora nav.menu, .druk-info, .btn { display: none; }
+  header.gora { background: none; color: var(--tekst); }
+  header.gora a, footer.dol, footer.dol a { color: var(--tekst); }
+  footer.dol { background: none; border-top: 2px solid var(--zielen-ciemna); }
+  body { font-size: 11pt; background: #fff; }
+  .srodek { width: 100%; max-width: none; }
+  h2 { break-after: avoid; }
+  .fakty, .uwaga { break-inside: avoid; border: 1px solid #999; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; }
+}
