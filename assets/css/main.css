@@ -57,6 +57,7 @@
 /* ---------- Baza ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+[id] { scroll-margin-top: 92px; }
 body {
   margin: 0;
   font-family: var(--tekstowa);
@@ -176,10 +177,10 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .bohater-plakietka b { font-family: var(--naglowki); font-size: 1.35rem; color: var(--z700); line-height: 1; }
 
 /* ---------- Sekcje ---------- */
-.sekcja { padding-block: clamp(3rem, 7vw, 5.5rem); }
+.sekcja { padding-block: clamp(2.5rem, 5vw, 4rem); }
 .sekcja-f { background: linear-gradient(180deg, var(--f50), var(--bialy)); }
 .sekcja-z { background: linear-gradient(180deg, var(--z50), var(--bialy)); }
-.sekcja-naglowek { max-width: 44rem; margin-bottom: clamp(1.8rem, 4vw, 3rem); }
+.sekcja-naglowek { max-width: 44rem; margin-bottom: clamp(1.5rem, 3vw, 2.2rem); }
 .sekcja-naglowek p { font-size: 1.12rem; color: var(--tekst-2); }
 
 /* ---------- Kafle faktów ---------- */
@@ -281,6 +282,11 @@ dialog.podglad button {
   border-radius: 999px 999px var(--luk) var(--luk); box-shadow: var(--cien-2);
 }
 .strona-glowa.bez-foto .szeroko { grid-template-columns: 1fr; }
+.strona-glowa figure.figura-logo { justify-self: center; }
+.strona-glowa figure.figura-logo img {
+  aspect-ratio: auto; object-fit: contain; width: min(100%, 280px);
+  border-radius: 0; box-shadow: none;
+}
 
 /* ---------- Oś czasu ---------- */
 .os { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; counter-reset: krok; }
@@ -349,6 +355,19 @@ ul.lista-ok li::before {
   outline: none; border-color: var(--f600); box-shadow: 0 0 0 3.5px var(--f100);
 }
 .pole textarea { min-height: 9.5rem; resize: vertical; }
+.pole input[type="file"] {
+  width: 100%; font: inherit; font-size: .92rem; color: var(--tekst-2);
+  border: 1.5px dashed #D8CFE5; border-radius: 12px; padding: .55rem .65rem;
+  background: var(--bialy); cursor: pointer; transition: border-color var(--przej);
+}
+.pole input[type="file"]:hover { border-color: var(--f500); }
+.pole input[type="file"]::file-selector-button {
+  font: inherit; font-weight: 700; font-size: .92rem; color: #fff;
+  background: var(--f700); border: none; border-radius: 999px;
+  padding: .5rem 1.2rem; margin-right: .9rem; cursor: pointer;
+  transition: background var(--przej);
+}
+.pole input[type="file"]:hover::file-selector-button { background: var(--f800); }
 .pole .blad-pola { display: none; font-size: .87rem; font-weight: 600; color: #A4243B; margin-top: .3rem; }
 .pole.ma-blad input, .pole.ma-blad textarea { border-color: #C4405A; }
 .pole.ma-blad .blad-pola { display: block; }
@@ -424,10 +443,35 @@ ul.lista-ok li::before {
 .katalog p { margin: 0; font-size: .96rem; }
 .katalog p i { color: var(--tekst-2); font-size: .87rem; }
 .drogi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
+.drogi-3 { grid-template-columns: repeat(3, 1fr); }
 .droga { border-radius: var(--luk); padding: 1.4rem 1.5rem; background: var(--z50); border: 1px solid var(--z100); }
 .droga:nth-child(2n) { background: var(--f50); border-color: var(--f100); }
 .droga h3 { font-size: 1.04rem; }
 .droga p { margin: 0; font-size: .92rem; color: var(--tekst-2); }
+
+/* darowizna pieniężna: droga wyróżniona, z numerem konta */
+.droga-glowna {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem); align-items: center;
+  background: linear-gradient(120deg, var(--z50), var(--f50));
+  border: 1.5px solid var(--z200); border-radius: var(--luk);
+  padding: clamp(1.3rem, 3vw, 2rem); margin-bottom: 1.1rem;
+}
+.droga-glowna h3 { font-size: 1.25rem; }
+.droga-glowna > div > p { margin: 0; font-size: .97rem; color: var(--tekst); }
+.konto {
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: 14px;
+  padding: 1.2rem 1.4rem; box-shadow: var(--cien-1);
+}
+.konto .etykieta {
+  display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--z700); margin-bottom: .3rem;
+}
+.konto b {
+  font-family: var(--naglowki); font-weight: 800; font-size: clamp(1.02rem, 2.2vw, 1.3rem);
+  color: var(--f800); display: block; letter-spacing: .015em; overflow-wrap: anywhere;
+}
+.konto p { margin: .5rem 0 0; font-size: .88rem; color: var(--tekst-2); }
 
 /* ---------- Dane kontaktowe ---------- */
 .kontakt-dane { display: grid; gap: 1rem; align-content: start; }
@@ -459,7 +503,7 @@ ul.lista-ok li::before {
 .kontakt-blok p { margin: .2rem 0; }
 
 /* ---------- Stopka ---------- */
-.dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(3rem, 7vw, 5rem); }
+.dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(2.5rem, 5vw, 3.5rem); }
 .dol a { color: #E6D9F3; }
 .dol a:hover { color: #fff; }
 .dol-siatka {
@@ -516,7 +560,7 @@ ul.lista-ok li::before {
   .bohater-foto > img { aspect-ratio: 4 / 3; border-radius: var(--luk); }
   .bohater-plakietka { left: .8rem; bottom: .8rem; }
   .strona-glowa figure { display: none; }
-  .fakty-kafle, .karty, .os, .kryteria, .nagrody, .partnerzy, .swiadczenia, .katalog, .drogi { grid-template-columns: 1fr; }
+  .fakty-kafle, .karty, .os, .kryteria, .nagrody, .partnerzy, .swiadczenia, .katalog, .drogi, .droga-glowna { grid-template-columns: 1fr; }
   .galeria { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
   .pola-2 { grid-template-columns: 1fr; gap: 0; }
   .pas > div { grid-template-columns: 1fr; }
@@ -524,12 +568,18 @@ ul.lista-ok li::before {
 }
 
 /* ---------- Druk (oferta sponsorska) ---------- */
+.druk-naglowek { display: none; }
 @media print {
   .gora, .dol, .pas, .przyciski, .menu-guzik { display: none !important; }
   body { font-size: 11pt; color: #222; }
   .strona-glowa, .sekcja { padding-block: .8cm; }
   .strona-glowa figure { display: none; }
   a { color: inherit; text-decoration: none; }
-  .swiadczenia, .katalog, .drogi { display: block; }
-  .swiadczenie, .katalog .pozycja, .droga { break-inside: avoid; margin-bottom: .4cm; border: 1px solid #ccc; }
+  .swiadczenia, .katalog, .drogi, .droga-glowna { display: block; }
+  .swiadczenie, .katalog .pozycja, .droga, .droga-glowna, .konto { break-inside: avoid; margin-bottom: .4cm; border: 1px solid #ccc; }
+  .druk-naglowek {
+    display: flex; align-items: center; gap: .5cm;
+    padding: .5cm 0 .3cm; border-bottom: 2px solid #ccc; margin-bottom: .3cm;
+  }
+  .druk-naglowek img { width: 2.2cm; height: 2.2cm; }
 }
