@@ -58,6 +58,37 @@
       albo po prostu przyjdź na najbliższe spotkanie. Terminy ogłaszamy na
       <a href="https://facebook.com/kgw.czemierniki" rel="noopener">profilu KGW na Facebooku</a>.</p>
     </div>
+
+    <form class="formularz formularz-mini" style="margin-top:2rem"
+      data-sukces="Dziękujemy! Odezwiemy się i zaprosimy Cię na najbliższe spotkanie." novalidate>
+      <h2 style="font-size:1.4rem">Wolisz, żebyśmy się odezwali?</h2>
+      <p class="legenda-opis">Zostaw kontakt do siebie. Zadzwonimy albo napiszemy i zaprosimy Cię
+      na najbliższe spotkanie. Bez żadnych zobowiązań.</p>
+      <input type="hidden" name="temat" value="dolacz">
+      <div class="pola-2">
+        <div class="pole">
+          <label for="d-imie">Imię i nazwisko</label>
+          <input type="text" id="d-imie" name="imie" autocomplete="name" required>
+          <p class="blad-pola">Podaj imię, żebyśmy wiedzieli, do kogo dzwonimy.</p>
+        </div>
+        <div class="pole">
+          <label for="d-kontakt">Telefon albo e-mail</label>
+          <input type="text" id="d-kontakt" name="kontakt" required>
+          <p class="blad-pola">Zostaw numer telefonu albo adres e-mail.</p>
+        </div>
+      </div>
+      <div class="pole">
+        <label for="d-wiadomosc">Chcesz coś dopisać? <span style="font-weight:500;color:var(--tekst-2)">(niewymagane)</span></label>
+        <textarea id="d-wiadomosc" name="wiadomosc" style="min-height:6rem"
+          placeholder="np. mam balkon i dopiero zaczynam, interesują mnie warsztaty"></textarea>
+      </div>
+      <p class="pole" style="position:absolute;left:-9999px" aria-hidden="true">
+        <label for="d-www">Zostaw to pole puste</label>
+        <input type="text" id="d-www" name="strona_www" tabindex="-1" autocomplete="off">
+      </p>
+      <button type="submit" class="przycisk wyslij">Wyślij</button>
+      <div class="wynik-wyslania" role="status"></div>
+    </form>
   </div>
 </section>
 

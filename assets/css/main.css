@@ -429,6 +429,23 @@ ul.lista-ok li::before {
 .droga h3 { font-size: 1.04rem; }
 .droga p { margin: 0; font-size: .92rem; color: var(--tekst-2); }
 
+/* ---------- Dane kontaktowe ---------- */
+.kontakt-dane { display: grid; gap: 1rem; align-content: start; }
+.kontakt-pozycja {
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
+  padding: 1.3rem 1.5rem;
+}
+.kontakt-pozycja .etykieta {
+  display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--z700); margin-bottom: .25rem;
+}
+.kontakt-pozycja .wartosc {
+  font-family: var(--naglowki); font-weight: 700; font-size: 1.3rem; color: var(--f800);
+  text-decoration: none; overflow-wrap: anywhere;
+}
+.kontakt-pozycja a.wartosc:hover { color: var(--f900); text-decoration: underline; }
+.kontakt-pozycja p { margin: .35rem 0 0; font-size: .9rem; color: var(--tekst-2); }
+
 /* ---------- Kontakt wyróżniony ---------- */
 .kontakt-blok {
   background: var(--bialy); border: 1.5px solid var(--f200); border-radius: 22px;

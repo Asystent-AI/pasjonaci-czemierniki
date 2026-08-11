@@ -126,19 +126,8 @@ def zgloszenie():
 
 
 def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
-    host = os.environ.get("SMTP_HOST")
-    if not host:
-        log.warning("SMTP nieskonfigurowany. Zgłoszenie tylko na dysku: %s", folder)
-        return
-
-    port = int(os.environ.get("SMTP_PORT", "587"))
-    uzytkownik = os.environ.get("SMTP_USER", "")
-    haslo = os.environ.get("SMTP_PASS", "")
-    nadawca = os.environ.get("MAIL_FROM", uzytkownik)
-
     wiadomosc = EmailMessage()
     wiadomosc["Subject"] = f"Konkurs ogrodowy: zgłoszenie od {dane['imie_nazwisko']}"
-    wiadomosc["From"] = f"Formularz pasjonaci.czemierniki.org <{nadawca}>"
     wiadomosc["To"] = MAIL_TO
     if dane["email"]:
         wiadomosc["Reply-To"] = dane["email"]
@@ -167,6 +156,71 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
             typ = ("image", "jpeg")
         wiadomosc.add_attachment(surowe, maintype=typ[0], subtype=typ[1], filename=plik.name)
 
+    wyslij_smtp(wiadomosc)
+
+
+@app.post("/api/kontakt")
+def kontakt():
+    # pułapka na boty
+    if request.form.get("strona_www", "").strip():
+        return jsonify(ok=True)
+
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()
+    if za_duzo_zgloszen(ip):
+        return jsonify(ok=False, blad="Za dużo wiadomości z tego adresu. Spróbuj za godzinę."), 429
+
+    imie = request.form.get("imie", "").strip()
+    dane_kontaktowe = request.form.get("kontakt", "").strip()
+    wiadomosc = request.form.get("wiadomosc", "").strip()
+    temat = request.form.get("temat", "kontakt").strip()
+    if not imie or not dane_kontaktowe:
+        return jsonify(ok=False, blad="Podaj imię oraz telefon albo e-mail."), 400
+
+    kiedy = datetime.now()
+    folder = KATALOG.parent / "wiadomosci"
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / f"{kiedy:%Y%m%d-%H%M%S}-{bezpieczna_nazwa(imie, 'anonim')}.json").write_text(
+        json.dumps({"imie": imie, "kontakt": dane_kontaktowe, "wiadomosc": wiadomosc,
+                    "temat": temat, "ip": ip, "kiedy": kiedy.isoformat()},
+                   ensure_ascii=False, indent=2), encoding="utf-8")
+    log.info("Zapisano wiadomość (%s) od: %s", temat, imie)
+
+    tytul = (f"Klub Pasjonatów: {imie} chce dołączyć" if temat == "dolacz"
+             else f"Wiadomość ze strony Klubu od {imie}")
+    tresc = "\n".join([
+        f"Wiadomość wysłana przez formularz na stronie {kiedy:%d.%m.%Y o %H:%M}.",
+        "",
+        f"Imię i nazwisko: {imie}",
+        f"Kontakt: {dane_kontaktowe}",
+        "",
+        wiadomosc or "(bez treści, prośba o kontakt)",
+    ])
+    try:
+        wiadomosc_email = EmailMessage()
+        wiadomosc_email["Subject"] = tytul
+        wiadomosc_email["To"] = MAIL_TO
+        if "@" in dane_kontaktowe and " " not in dane_kontaktowe:
+            wiadomosc_email["Reply-To"] = dane_kontaktowe
+        wiadomosc_email.set_content(tresc)
+        wyslij_smtp(wiadomosc_email)
+    except Exception:
+        log.exception("Wysyłka wiadomości kontaktowej nie powiodła się, kopia na dysku")
+
+    return jsonify(ok=True)
+
+
+def wyslij_smtp(wiadomosc: EmailMessage) -> None:
+    """Wspólna wysyłka: uzupełnia nadawcę i wysyła przez SMTP z env."""
+    host = os.environ.get("SMTP_HOST")
+    if not host:
+        log.warning("SMTP nieskonfigurowany, wiadomość tylko na dysku")
+        return
+    port = int(os.environ.get("SMTP_PORT", "587"))
+    uzytkownik = os.environ.get("SMTP_USER", "")
+    haslo = os.environ.get("SMTP_PASS", "")
+    nadawca = os.environ.get("MAIL_FROM", uzytkownik)
+    if "From" not in wiadomosc:
+        wiadomosc["From"] = f"Strona pasjonaci.czemierniki.org <{nadawca}>"
     if port == 465:
         with smtplib.SMTP_SSL(host, port, timeout=60) as s:
             if uzytkownik:
@@ -178,7 +232,7 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
             if uzytkownik:
                 s.login(uzytkownik, haslo)
             s.send_message(wiadomosc)
-    log.info("E-mail ze zgłoszeniem wysłany do %s", MAIL_TO)
+    log.info("E-mail wysłany do %s: %s", wiadomosc["To"], wiadomosc["Subject"])
 
 
 @app.errorhandler(413)

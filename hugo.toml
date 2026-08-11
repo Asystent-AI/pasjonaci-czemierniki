@@ -24,3 +24,7 @@ enableRobotsTXT = true
     name = 'Dla sponsorów'
     pageRef = '/sponsorzy'
     weight = 20
+  [[menus.main]]
+    name = 'Kontakt'
+    pageRef = '/kontakt'
+    weight = 30

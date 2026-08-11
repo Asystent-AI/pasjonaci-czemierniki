@@ -1,0 +1,72 @@
+{{ define "main" }}
+
+<section class="strona-glowa bez-foto">
+  <div class="szeroko">
+    <div>
+      <h1>Kontakt</h1>
+      <p class="zajawka">Zadzwoń, napisz albo po prostu przyjdź na spotkanie.
+      Odpowiadamy zwykle <strong>tego samego dnia</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja">
+  <div class="szeroko">
+    <div class="dwie-kolumny">
+
+      <div class="kontakt-dane">
+        <div class="kontakt-pozycja">
+          <span class="etykieta">Telefon</span>
+          <a class="wartosc" href="tel:+48795716644">795 716 644</a>
+          <p>Beata Michalska, koordynatorka Klubu. Jeśli nie odbierze, oddzwoni.</p>
+        </div>
+        <div class="kontakt-pozycja">
+          <span class="etykieta">E-mail</span>
+          <a class="wartosc" href="mailto:kgw.czemierniki@gmail.com">kgw.czemierniki@gmail.com</a>
+          <p>Na ten adres możesz też wysłać kartę zgłoszeniową do konkursu.</p>
+        </div>
+        <div class="kontakt-pozycja">
+          <span class="etykieta">Facebook</span>
+          <a class="wartosc" href="https://facebook.com/kgw.czemierniki" rel="noopener">Profil KGW Czemierniki</a>
+          <p>Tu ogłaszamy terminy spotkań i relacje z wydarzeń. Można pisać na Messengerze.</p>
+        </div>
+        <div class="kontakt-pozycja">
+          <span class="etykieta">Adres</span>
+          <span class="wartosc">ul. Zamkowa 11, 21-306 Czemierniki</span>
+          <p>Koło Gospodyń Wiejskich Czemierniki, organizacja prowadząca Klub.</p>
+        </div>
+      </div>
+
+      <form class="formularz formularz-mini" data-sukces="Dziękujemy za wiadomość! Odezwiemy się najszybciej, jak się da, zwykle tego samego dnia." novalidate>
+        <h2>Napisz do nas</h2>
+        <input type="hidden" name="temat" value="kontakt">
+        <div class="pole">
+          <label for="k-imie">Imię i nazwisko</label>
+          <input type="text" id="k-imie" name="imie" autocomplete="name" required>
+          <p class="blad-pola">Podaj imię, żebyśmy wiedzieli, do kogo piszemy.</p>
+        </div>
+        <div class="pole">
+          <label for="k-kontakt">Telefon albo e-mail</label>
+          <input type="text" id="k-kontakt" name="kontakt" required>
+          <p class="blad-pola">Zostaw numer telefonu albo adres e-mail, inaczej nie zdołamy odpowiedzieć.</p>
+        </div>
+        <div class="pole">
+          <label for="k-wiadomosc">Wiadomość</label>
+          <textarea id="k-wiadomosc" name="wiadomosc" required></textarea>
+          <p class="blad-pola">Napisz choć zdanie, o co chodzi.</p>
+        </div>
+        <p class="pole" style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="k-www">Zostaw to pole puste</label>
+          <input type="text" id="k-www" name="strona_www" tabindex="-1" autocomplete="off">
+        </p>
+        <button type="submit" class="przycisk wyslij">Wyślij wiadomość</button>
+        <div class="wynik-wyslania" role="status"></div>
+        <p class="podpowiedz" style="font-size:.85rem;color:var(--tekst-2);margin:.9rem 0 0">Dane z formularza
+        wykorzystujemy wyłącznie do odpowiedzi na Twoją wiadomość.</p>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+{{ end }}

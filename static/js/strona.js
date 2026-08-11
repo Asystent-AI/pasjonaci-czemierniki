@@ -46,6 +46,39 @@
     });
   }
 
+  /* ---------- Formularze kontaktowe (Kontakt, Dołącz) ---------- */
+  document.querySelectorAll('form.formularz-mini').forEach(function (fm) {
+    fm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var wynikMini = fm.querySelector('.wynik-wyslania');
+      wynikMini.className = 'wynik-wyslania'; wynikMini.textContent = '';
+      var poprawny = true;
+      fm.querySelectorAll('[required]').forEach(function (p) {
+        var puste = !p.value.trim();
+        var pole = p.closest('.pole');
+        if (pole) pole.classList.toggle('ma-blad', puste);
+        if (puste) poprawny = false;
+      });
+      if (!poprawny) return;
+      var guzik = fm.querySelector('button[type="submit"]');
+      guzik.disabled = true;
+      fetch('/api/kontakt', { method: 'POST', body: new FormData(fm) })
+        .then(function (r) { return r.json(); })
+        .then(function (odp) {
+          if (!odp.ok) { var e2 = new Error(''); e2.wlasny = odp.blad; throw e2; }
+          wynikMini.className = 'wynik-wyslania sukces';
+          wynikMini.textContent = fm.getAttribute('data-sukces');
+          fm.reset();
+        })
+        .catch(function (err) {
+          wynikMini.className = 'wynik-wyslania porazka';
+          wynikMini.textContent = (err && err.wlasny) ||
+            'Nie udało się wysłać wiadomości. Zadzwoń: 795 716 644 albo napisz na kgw.czemierniki@gmail.com.';
+        })
+        .finally(function () { guzik.disabled = false; });
+    });
+  });
+
   /* ---------- Formularz konkursowy ---------- */
   var form = document.getElementById('formularz-konkursu');
   if (!form) return;
