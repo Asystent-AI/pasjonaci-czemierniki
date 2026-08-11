@@ -177,11 +177,15 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .bohater-plakietka b { font-family: var(--naglowki); font-size: 1.35rem; color: var(--z700); line-height: 1; }
 
 /* ---------- Sekcje ---------- */
-.sekcja { padding-block: clamp(2.5rem, 5vw, 4rem); }
+.sekcja { padding-block: clamp(1.75rem, 3.6vw, 2.75rem); }
 .sekcja-f { background: linear-gradient(180deg, var(--f50), var(--bialy)); }
 .sekcja-z { background: linear-gradient(180deg, var(--z50), var(--bialy)); }
-.sekcja-naglowek { max-width: 44rem; margin-bottom: clamp(1.5rem, 3vw, 2.2rem); }
+.sekcja-naglowek { max-width: 44rem; margin-bottom: clamp(1.25rem, 2.5vw, 1.4rem); }
 .sekcja-naglowek p { font-size: 1.12rem; color: var(--tekst-2); }
+/* ogony ostatnich akapitów i list sumowały się z paddingiem sekcji */
+.sekcja :is(p, ul, ol):last-child { margin-bottom: 0; }
+/* sekcja z banerem CTA: baner ma własny padding wewnętrzny, sekcja nie musi go dublować */
+.sekcja-pas { padding-block: clamp(1.25rem, 2.5vw, 1.9rem); }
 
 /* ---------- Kafle faktów ---------- */
 .fakty-kafle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
@@ -271,7 +275,7 @@ dialog.podglad button {
 .strona-glowa .szeroko {
   display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
   gap: clamp(2rem, 5vw, 4rem); align-items: center;
-  padding-top: clamp(2.2rem, 5vw, 4rem); padding-bottom: clamp(2.2rem, 5vw, 4rem);
+  padding-top: clamp(2.2rem, 5vw, 4rem); padding-bottom: clamp(1.9rem, 4vw, 3rem);
 }
 .strona-glowa .znaczki { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 1.2rem; }
 .strona-glowa h1 em { color: var(--f700); }
@@ -325,6 +329,7 @@ dialog.podglad button {
 /* ---------- Listy z ptaszkami ---------- */
 ul.lista-ok { list-style: none; padding: 0; margin: 0 0 1em; }
 ul.lista-ok li { position: relative; padding-left: 1.9rem; margin-bottom: .55rem; }
+ul.lista-ok li:last-child { margin-bottom: 0; }
 ul.lista-ok li::before {
   content: ""; position: absolute; left: 0; top: .32rem; width: 1.15rem; height: 1.15rem;
   border-radius: 50%; background: var(--z100);
@@ -337,12 +342,13 @@ ul.lista-ok li::before {
   background: var(--bialy); border: 1px solid var(--linia); border-radius: 22px;
   box-shadow: var(--cien-1); padding: clamp(1.4rem, 4vw, 2.6rem);
 }
-.formularz fieldset { border: none; padding: 0; margin: 0 0 2.2rem; }
+.formularz fieldset { border: none; padding: 0; margin: 0 0 1.7rem; }
+.formularz fieldset > *:last-child { margin-bottom: 0; }
 .formularz legend {
   font-family: var(--naglowki); font-weight: 700; font-size: 1.22rem; color: var(--atrament);
   padding: 0; margin-bottom: .35rem;
 }
-.formularz .legenda-opis { font-size: .95rem; color: var(--tekst-2); margin-bottom: 1.2rem; }
+.formularz .legenda-opis { font-size: .95rem; color: var(--tekst-2); margin-bottom: .9rem; }
 .pole { margin-bottom: 1.15rem; }
 .pole label { display: block; font-weight: 700; font-size: .95rem; color: var(--atrament); margin-bottom: .35rem; }
 .pole .podpowiedz { font-size: .85rem; color: var(--tekst-2); margin: .3rem 0 0; }
@@ -409,7 +415,7 @@ ul.lista-ok li::before {
 .licznik-zdjec.ok { color: var(--z700); }
 .licznik-zdjec.za-malo { color: #A4243B; }
 
-.formularz .wyslij { width: 100%; font-size: 1.15rem; padding: 1.05rem; }
+.formularz .wyslij { width: 100%; font-size: 1.15rem; padding: 1.05rem; margin-top: 1.5rem; }
 .formularz .wyslij[disabled] { opacity: .6; cursor: wait; transform: none; }
 .pasek-wysylki { height: 8px; border-radius: 99px; background: var(--f100); overflow: hidden; margin-top: 1rem; display: none; }
 .pasek-wysylki > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--z400), var(--f600)); transition: width .3s ease; }
@@ -428,12 +434,59 @@ ul.lista-ok li::before {
 }
 .cytat-duzy em { font-style: normal; color: var(--z700); }
 .dwie-kolumny { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+/* dwie kolumny o różnej długości zostawiały dziurę pod krótszą: kartami wyrównujemy wysokość */
+.dwie-kolumny.kolumny-karty { align-items: stretch; gap: 1.1rem; }
+.kolumny-karty > div {
+  background: var(--bialy); border: 1px solid var(--linia);
+  border-radius: var(--luk); padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.2rem, 3vw, 1.8rem);
+}
+.kolumny-karty h2 { font-size: clamp(1.35rem, 2.6vw, 1.7rem); }
+/* stretch, a nie start: karty w rzędzie kończą się równo, zamiast zostawiać schodkową dziurę */
 .swiadczenia { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
-.swiadczenie { background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk); padding: 1.5rem 1.6rem; }
-.swiadczenie h3 { font-size: 1.06rem; }
-.swiadczenie ul { list-style: none; margin: 0; padding: 0; font-size: .93rem; color: var(--tekst-2); }
-.swiadczenie li { padding: .32rem 0; border-bottom: 1px dashed var(--linia); }
-.swiadczenie li:last-child { border-bottom: none; }
+.swiadczenie {
+  display: flex; flex-direction: column;
+  --akcent: var(--f700); --akcent-mocny: var(--f900);
+  --akcent-tlo: var(--f100); --akcent-linia: var(--f200);
+  position: relative; overflow: hidden;
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
+  transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
+}
+.swiadczenie-z {
+  --akcent: var(--z700); --akcent-mocny: var(--z800);
+  --akcent-tlo: var(--z100); --akcent-linia: var(--z200);
+}
+.swiadczenie::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--akcent);
+}
+.swiadczenie:hover { box-shadow: var(--cien-2); border-color: var(--akcent-linia); }
+.swiadczenie-glowa {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1.15rem 1.35rem 1.05rem;
+  background: var(--akcent-tlo); border-bottom: 1px solid var(--akcent-linia);
+}
+.swiadczenie-ikona {
+  flex: none; width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--bialy); color: var(--akcent); box-shadow: var(--cien-1);
+}
+.swiadczenie-ikona svg { width: 23px; height: 23px; display: block; }
+.swiadczenie h3 { font-size: 1.05rem; margin: 0; color: var(--akcent-mocny); }
+.swiadczenie ul { list-style: none; margin: 0; padding: .5rem 1.35rem 1.15rem; flex: 1; }
+.swiadczenie li {
+  position: relative; padding: .5rem 0 .5rem 1.35rem;
+  font-size: .95rem; line-height: 1.42; color: var(--tekst);
+}
+.swiadczenie li + li { border-top: 1px solid var(--linia); }
+.swiadczenie li::before {
+  content: ""; position: absolute; left: .1rem; top: 1rem;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--akcent);
+}
+.swiadczenia-pointa {
+  margin-top: 1.4rem; font-family: var(--naglowki); font-weight: 700;
+  font-size: clamp(1.05rem, 2.2vw, 1.32rem); line-height: 1.35;
+  color: var(--atrament); max-width: 46rem;
+}
+.swiadczenia-pointa em { font-style: normal; color: var(--z700); }
 .katalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
 .katalog .pozycja {
   display: flex; gap: 1rem; align-items: baseline; background: var(--bialy);
@@ -503,12 +556,12 @@ ul.lista-ok li::before {
 .kontakt-blok p { margin: .2rem 0; }
 
 /* ---------- Stopka ---------- */
-.dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(1.5rem, 3vw, 2rem); }
 .dol a { color: #E6D9F3; }
 .dol a:hover { color: #fff; }
 .dol-siatka {
   display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) minmax(0, 3fr);
-  gap: clamp(1.6rem, 4vw, 3rem); padding-block: clamp(2.4rem, 5vw, 3.6rem);
+  gap: clamp(1.6rem, 4vw, 3rem); padding-block: clamp(2rem, 4vw, 2.8rem);
 }
 .dol h4 { color: #fff; font-size: .95rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .9rem; }
 .dol .o-klubie { display: flex; gap: 1.1rem; align-items: flex-start; }
@@ -527,18 +580,24 @@ ul.lista-ok li::before {
   .odslon:nth-child(2) { transition-delay: .08s; }
   .odslon:nth-child(3) { transition-delay: .16s; }
   .odslon:nth-child(4) { transition-delay: .24s; }
+  /* .odslon.widoczne { transform: none } zabijalo hover kart: oddajemy im podniesienie */
+  :is(.karta, .swiadczenie).widoczne {
+    transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
+    transition-delay: 0s;
+  }
+  :is(.karta, .swiadczenie).widoczne:hover { transform: translateY(-4px); }
 }
 
 /* ---------- Zawijanie: tablet ---------- */
 @media (max-width: 980px) {
   .karty, .kryteria, .drogi { grid-template-columns: repeat(2, 1fr); }
-  .swiadczenia, .partnerzy { grid-template-columns: repeat(2, 1fr); }
+  .partnerzy, .swiadczenia { grid-template-columns: repeat(2, 1fr); }
   .galeria { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 190px; }
   .dol-siatka { grid-template-columns: 1fr 1fr; }
 }
 
-/* ---------- Zawijanie: telefon ---------- */
-@media (max-width: 760px) {
+/* ---------- Menu: hamburger poniżej 900px, bo przy 768 pozycje zawijały się w dwie linie ---------- */
+@media (max-width: 900px) {
   .menu {
     display: none; position: absolute; top: 100%; left: 0; right: 0;
     background: var(--bialy); border-bottom: 1px solid var(--linia);
@@ -555,12 +614,16 @@ ul.lista-ok li::before {
   }
   .menu-guzik svg { display: block; }
   .gora .szeroko { position: relative; }
+}
 
+/* ---------- Zawijanie: telefon ---------- */
+@media (max-width: 760px) {
   .bohater .szeroko, .strona-glowa .szeroko, .dwie-kolumny { grid-template-columns: 1fr; }
   .bohater-foto > img { aspect-ratio: 4 / 3; border-radius: var(--luk); }
   .bohater-plakietka { left: .8rem; bottom: .8rem; }
   .strona-glowa figure { display: none; }
   .fakty-kafle, .karty, .os, .kryteria, .nagrody, .partnerzy, .swiadczenia, .katalog, .drogi, .droga-glowna { grid-template-columns: 1fr; }
+  .dwie-kolumny.kolumny-karty { align-items: start; }
   .galeria { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
   .pola-2 { grid-template-columns: 1fr; gap: 0; }
   .pas > div { grid-template-columns: 1fr; }
@@ -577,6 +640,13 @@ ul.lista-ok li::before {
   a { color: inherit; text-decoration: none; }
   .swiadczenia, .katalog, .drogi, .droga-glowna { display: block; }
   .swiadczenie, .katalog .pozycja, .droga, .droga-glowna, .konto { break-inside: avoid; margin-bottom: .4cm; border: 1px solid #ccc; }
+  /* karta świadczeń: tła i kropki-punktory nie drukują się, oddajemy padding i natywne punktory */
+  .swiadczenie { padding: .25cm .4cm .3cm; }
+  .swiadczenie::before, .swiadczenie-ikona { display: none; }
+  .swiadczenie-glowa { padding: 0 0 .1cm; margin-bottom: .15cm; background: none; border-bottom: 1px solid #ccc; }
+  .swiadczenie ul { list-style: disc; padding: 0 0 0 .5cm; }
+  .swiadczenie li { padding: .08cm 0; border-top: none; }
+  .swiadczenie li::before { display: none; }
   .druk-naglowek {
     display: flex; align-items: center; gap: .5cm;
     padding: .5cm 0 .3cm; border-bottom: 2px solid #ccc; margin-bottom: .3cm;
