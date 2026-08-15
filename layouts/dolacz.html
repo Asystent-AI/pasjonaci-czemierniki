@@ -15,10 +15,9 @@
         <a class="przycisk przycisk-duzy" href="tel:+48795716644">Zadzwoń do Beaty</a>
       </div>
     </div>
-    <figure>
-      <img src="/zdjecia/rozmowy-d.webp" srcset="/zdjecia/rozmowy-m.webp 800w, /zdjecia/rozmowy-d.webp 1600w"
-        sizes="(max-width: 760px) 0px, 30vw" width="1600" height="1202"
-        alt="Klubowicze rozmawiają w ogrodzie podczas spotkania Klubu">
+    <figure class="figura-znak">
+      <img src="{{ "odznaka.webp" | relURL }}" width="640" height="640"
+        alt="Odznaka Klubu Pasjonatów Ogrodnictwa Czemierniki: kwiat ciemiernika">
     </figure>
   </div>
 </section>
@@ -38,9 +37,11 @@
         <p>Zajrzyj też do <a href="/#galeria">galerii z naszych spotkań</a>.</p>
       </div>
       <div>
-        <img src="/zdjecia/koty-m.webp" width="800" height="601" loading="lazy"
+        <img class="powieksz" data-duze="/zdjecia/koty-d.webp"
+          src="/zdjecia/koty-m.webp" srcset="/zdjecia/koty-s.webp 500w, /zdjecia/koty-m.webp 800w"
+          sizes="(max-width: 900px) 92vw, 45vw" width="800" height="601" loading="lazy"
           alt="Dwa koty odpoczywają na kamieniach w jednym z odwiedzanych ogrodów"
-          style="border-radius:var(--luk);box-shadow:var(--cien-1)">
+          style="border-radius:var(--luk-foto);box-shadow:var(--cien-1)">
         <p style="font-size:.9rem;color:var(--tekst-2);margin-top:.6rem">Na plenerach poznajemy
         też najbardziej wylegiwanych mieszkańców ogrodów.</p>
       </div>
@@ -56,7 +57,7 @@
       <p>Zadzwoń do Beaty, koordynatorki Klubu.</p>
       <p>Albo napisz na <a href="mailto:kgw.czemierniki@gmail.com">kgw.czemierniki@gmail.com</a>,
       albo po prostu przyjdź na najbliższe spotkanie. Terminy ogłaszamy na
-      <a href="https://facebook.com/kgw.czemierniki" rel="noopener">profilu KGW na Facebooku</a>.</p>
+      <a href="https://www.facebook.com/kgw.czemierniki" target="_blank" rel="noopener">profilu KGW na Facebooku</a>.</p>
     </div>
 
     <form class="formularz formularz-mini" style="margin-top:2rem"
@@ -73,7 +74,7 @@
         </div>
         <div class="pole">
           <label for="d-kontakt">Telefon albo e-mail</label>
-          <input type="text" id="d-kontakt" name="kontakt" required>
+          <input type="text" id="d-kontakt" name="kontakt" autocomplete="tel" autocapitalize="none" spellcheck="false" required>
           <p class="blad-pola">Zostaw numer telefonu albo adres e-mail.</p>
         </div>
       </div>
@@ -82,7 +83,7 @@
         <textarea id="d-wiadomosc" name="wiadomosc" style="min-height:6rem"
           placeholder="np. mam balkon i dopiero zaczynam, interesują mnie warsztaty"></textarea>
       </div>
-      <p class="pole" style="position:absolute;left:-9999px" aria-hidden="true">
+      <p class="pulapka" aria-hidden="true">
         <label for="d-www">Zostaw to pole puste</label>
         <input type="text" id="d-www" name="strona_www" tabindex="-1" autocomplete="off">
       </p>

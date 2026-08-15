@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ if .IsHome }}{{ site.Title }} Czemierniki{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+{{/* pasek przegladarki na Androidzie w kolorze znaku: telefon jest tu glownym ekranem */}}
+<meta name="theme-color" content="#461571">
+<title>{{ if .IsHome }}{{ site.Title }} Czemierniki{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }} Czemierniki{{ else }}{{ .Title }}{{ end }}">
 <meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.opis }}{{ end }}">
@@ -16,7 +18,12 @@
 <link rel="preload" href="/fonty/bricolage-grotesque-v9-latin_latin-ext-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonty/manrope-v20-latin_latin-ext-regular.woff2" as="font" type="font/woff2" crossorigin>
 {{ with resources.Get "css/main.css" }}{{ $c := . | fingerprint }}<link rel="stylesheet" href="{{ $c.RelPermalink }}">{{ end }}
-{{ with site.Params.umami }}<script defer src="{{ . }}" data-website-id="{{ site.Params.umamiId }}"></script>{{ end }}
+{{/* animacje wejscia wlaczaja sie dopiero, gdy JS naprawde dziala: bez tej klasy
+     sekcje .odslon zostawaly niewidoczne u kazdego, komu skrypt nie wstal */}}
+<script>document.documentElement.className += ' js'</script>
+{{/* data-do-not-track NIE jest domyslne: bez tego atrybutu Umami ignoruje ustawienie
+     "Nie sledz" w przegladarce. To nasza realizacja prawa sprzeciwu, zamiast banera. */}}
+{{ with site.Params.umami }}<script defer src="{{ . }}" data-website-id="{{ site.Params.umamiId }}" data-do-not-track="true"></script>{{ end }}
 </head>
 <body>
 
@@ -42,34 +49,52 @@
 <footer class="dol">
   <div class="szeroko dol-siatka">
     <div class="o-klubie">
-      <img src="{{ "odznaka-240.webp" | relURL }}" alt="Odznaka Klubu Pasjonatów Ogrodnictwa Czemierniki" width="84" height="84" loading="lazy">
-      <p>Klub Pasjonatów Ogrodnictwa to otwarta inicjatywa przy Kole Gospodyń Wiejskich
-      Czemierniki. Spotkania, plenery, wymiany roślin i konkursy. Udział jest bezpłatny
-      i nie wymaga członkostwa w KGW.</p>
+      <img src="{{ "odznaka-240.webp" | relURL }}" alt="Odznaka Klubu Pasjonatów Ogrodnictwa Czemierniki" width="96" height="96" loading="lazy">
+      <p>Klub Pasjonatów Ogrodnictwa to otwarta inicjatywa działająca przy Kole Gospodyń
+      Wiejskich Czemierniki. Spotkania, konkursy, plenery, lokalna pomoc, wymiana nasionami
+      i sadzonkami. Udział w naszym klubie jest całkowicie darmowy.</p>
     </div>
     <div>
-      <h4>Kontakt</h4>
-      <ul>
-        <li><a href="tel:+48795716644">{{ site.Params.telefon }}</a></li>
-        <li><a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></li>
-        <li><a href="{{ site.Params.facebook }}" rel="noopener">Profil KGW na Facebooku</a></li>
+      <h4>Odezwij się do nas</h4>
+      <ul class="dol-kontakt">
+        <li><a href="tel:+48795716644">
+          <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 3.5h3l1.4 3.6-2 1.5a11.5 11.5 0 0 0 5.2 5.2l1.5-2 3.6 1.4v3a1.8 1.8 0 0 1-2 1.8A15.6 15.6 0 0 1 4.5 5.5a1.8 1.8 0 0 1 1.8-2Z"/></svg></span>
+          <span><b>{{ site.Params.telefon }}</b><small>Beata, koordynatorka Klubu</small></span></a></li>
+        <li><a href="mailto:{{ site.Params.email }}">
+          <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.8 7 7.1 5.2c.7.5 1.6.5 2.2 0L20.2 7"/></svg></span>
+          <span><b>{{ site.Params.email }}</b><small>sprawnie odpowiemy i chętnie pomożemy</small></span></a></li>
+        <li><a href="{{ site.Params.facebook }}" target="_blank" rel="noopener">
+          <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.8 21v-7.6h2.6l.5-3h-3.1V8.5c0-.9.3-1.5 1.6-1.5h1.6V4.3c-.8-.1-1.7-.2-2.5-.2-2.5 0-4.2 1.5-4.2 4.3v2.4H8.6v3h2.7V21"/></svg></span>
+          <span><b>Profil KGW na Facebooku</b><small>terminy naszych spotkań i relacje</small></span></a></li>
       </ul>
     </div>
     <div>
       <h4>Koło Gospodyń Wiejskich Czemierniki</h4>
       <p class="dane">ul. Zamkowa 11, 21-306 Czemierniki<br>
-      KRKGW 0615030001<br>NIP 5381859198 · REGON 382093920<br>
-      Konto: 15 8046 1025 2002 0350 4444 0001</p>
+      KRKGW 0615030001<br>
+      NIP 5381859198<br>
+      REGON 382093920</p>
+      <p class="dane dane-konto"><span>Konto</span><em>Bank Spółdzielczy w Czemiernikach</em>15 8046 1025 2002 0350 4444 0001</p>
     </div>
   </div>
   <div class="dol-pasek">
     <div class="szeroko">
-      <span>© 2026 Koło Gospodyń Wiejskich Czemierniki</span>
-      <span><a href="/konkurs/">Konkurs 2026</a> · <a href="/sponsorzy/">Dla sponsorów</a> · <a href="/dolacz/">Dołącz</a> · <a href="/kontakt/">Kontakt</a></span>
+      <span>© 2026 Projekt i realizacja <a href="https://www.facebook.com/michalski.bartosz" target="_blank" rel="noopener">Bartosz Michalski</a> dla Koła Gospodyń Wiejskich Czemierniki</span>
+      <nav class="dol-linki">
+        <a href="/konkurs/">Konkurs 2026</a>
+        <a href="/sponsorzy/">Dla sponsorów</a>
+        <a href="/dolacz/">Dołącz</a>
+        <a href="/kontakt/">Kontakt</a>
+      </nav>
     </div>
   </div>
 </footer>
 
-<script src="{{ "js/strona.js" | relURL }}" defer></script>
+{{- $zdjecia := slice -}}
+{{- range site.Data.galeria -}}
+  {{- $zdjecia = $zdjecia | append (dict "duze" (printf "/zdjecia/%s-d.webp" .plik) "alt" .alt) -}}
+{{- end }}
+<script type="application/json" id="zdjecia-klubu">{{ $zdjecia | jsonify | safeJS }}</script>
+{{ with resources.Get "js/strona.js" }}{{ $j := . | fingerprint }}<script src="{{ $j.RelPermalink }}" defer></script>{{ end }}
 </body>
 </html>

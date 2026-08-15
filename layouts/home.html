@@ -3,28 +3,34 @@
 <section class="bohater">
   <div class="szeroko">
     <div>
-      <h1>Masz ogród, działkę albo <em>balkon</em>?</h1>
-      <p class="zajawka">Jesteśmy klubem ogrodników z gminy Czemierniki. Spotykamy się co miesiąc,
-      wymieniamy sadzonkami i odwiedzamy swoje ogrody. <strong>Udział bezpłatny, nie trzeba
-      należeć do KGW.</strong></p>
+      <h1>Masz ogród, działkę, a może <em>balkon</em>?</h1>
+      <p class="zajawka">Jesteśmy klubem ogrodników działających aktywnie na terenie gminy
+      Czemierniki. Regularnie spotykamy się w sympatycznym gronie, wymieniamy doświadczeniami,
+      sadzonkami i odwiedzamy nasze ogrody. <strong>Udział w naszym Klubie jest całkowicie
+      bezpłatny.</strong></p>
       <div class="przyciski">
         <a class="przycisk przycisk-duzy" href="/dolacz/">Dołącz do Klubu</a>
         <a class="przycisk przycisk-2 przycisk-duzy" href="/konkurs/">Konkurs na ogród 2026</a>
       </div>
     </div>
     <div class="bohater-foto">
-      <img src="/zdjecia/ogrod-zloty-d.webp" srcset="/zdjecia/ogrod-zloty-m.webp 800w, /zdjecia/ogrod-zloty-d.webp 1600w"
-        sizes="(max-width: 760px) 92vw, 42vw" width="1600" height="1202"
+      {{/* 60vw na telefonie to celowe zaniżenie: zdjęcie zajmuje 92vw, ale przy tak
+           zadeklarowanym slocie nawet ekran 3x bierze wariant -m (157 KB), a nie -d (580 KB).
+           Na 358 px szerokości plik 800 px daje i tak 2,2-krotne zagęszczenie. */}}
+      <img class="powieksz" data-duze="/zdjecia/ogrod-zloty-d.webp"
+        src="/zdjecia/ogrod-zloty-m.webp" srcset="/zdjecia/ogrod-zloty-m.webp 800w, /zdjecia/ogrod-zloty-d.webp 1600w"
+        sizes="(max-width: 760px) 60vw, 42vw" width="1600" height="1202"
         alt="Uczestnicy lipcowego pleneru Klubu w ogrodzie pełnym kwiatów, w złotym świetle wieczoru" fetchpriority="high">
       <p class="bohater-plakietka"><b>20+</b> osób na lipcowym plenerze Klubu</p>
+      <img class="bohater-znak" src="{{ "odznaka-240.webp" | relURL }}" alt="" width="128" height="128" loading="lazy">
     </div>
   </div>
 </section>
 
 <section class="sekcja" aria-label="Najważniejsze fakty">
   <div class="szeroko fakty-kafle">
-    <div class="kafel kafel-f odslon"><b>Honorowy Patronat</b><span>Burmistrza Gminy Czemierniki nad konkursem ogrodniczym</span></div>
-    <div class="kafel kafel-z odslon"><b>2.000 zł</b><span>wartość nagród ufundowanych przez Szkółkę Roślin Ozdobnych Ania</span></div>
+    <div class="kafel kafel-f odslon"><b>Honorowy Patronat</b><span>Burmistrza Gminy Czemierniki, który dołożył też 1.000 zł do puli nagród</span></div>
+    <div class="kafel kafel-z odslon"><b>2.000 zł</b><span>w voucherach do Szkółki Roślin Ozdobnych Ania: po 1.000 zł od Burmistrza i od szkółki</span></div>
     <div class="kafel kafel-k odslon"><b>22 sierpnia 2026</b><span>finał konkursu na scenie Dożynek Gminno-Parafialnych</span></div>
   </div>
 </section>
@@ -33,24 +39,31 @@
   <div class="szeroko">
     <div class="sekcja-naglowek">
       <h2>Co robimy w Klubie</h2>
-      <p>Nie trzeba się znać na ogrodnictwie. Wystarczy, że lubisz rośliny, resztą podzielimy się sami.</p>
+      <p>Nie trzeba się znać na ogrodnictwie ani mieć dużego ogrodu. Wystarczy, że lubisz
+      rośliny, resztą podzielimy się sami. Przez cały sezon spotykamy się w miłym gronie,
+      wymieniamy sadzonkami, nasionami i doświadczeniem, odwiedzamy swoje ogrody, prowadzimy
+      konkurs ogrodniczy i organizujemy lokalne akcje dla mieszkańców gminy.</p>
     </div>
     <div class="karty">
       <a class="karta odslon" href="/dolacz/">
-        <img src="/zdjecia/rozmowy-m.webp" width="800" height="601" loading="lazy" alt="Klubowicze rozmawiają w ogrodzie podczas spotkania">
+        <img src="/zdjecia/rozmowy-m.webp" srcset="/zdjecia/rozmowy-s.webp 500w, /zdjecia/rozmowy-m.webp 800w" sizes="(max-width: 760px) 40vw, 22vw" width="800" height="601" loading="lazy" alt="Klubowicze rozmawiają w ogrodzie podczas spotkania">
         <div><h3>Regularnie się spotykamy</h3><p>Zbiera się miłe grono, zawsze przy czymś dobrym. Nikt tu nikogo nie odpytuje z wiedzy.</p></div>
       </a>
       <a class="karta odslon" href="/dolacz/">
-        <img src="/zdjecia/jezowki-m.webp" width="800" height="1065" loading="lazy" alt="Kwitnące jeżówki w wieczornym słońcu">
+        <img src="/zdjecia/jezowki-m.webp" srcset="/zdjecia/jezowki-s.webp 500w, /zdjecia/jezowki-m.webp 800w" sizes="(max-width: 760px) 40vw, 22vw" width="800" height="1065" loading="lazy" alt="Kwitnące jeżówki w wieczornym słońcu">
         <div><h3>Wymieniamy się roślinami</h3><p>Sadzonki, nasiona i cebulki krążą między nami za darmo.</p></div>
       </a>
       <a class="karta odslon" href="/dolacz/">
-        <img src="/zdjecia/spacer-rabata-m.webp" width="800" height="601" loading="lazy" alt="Grupa zwiedza rabaty podczas pleneru w ogrodzie">
+        <img src="/zdjecia/spacer-rabata-m.webp" srcset="/zdjecia/spacer-rabata-s.webp 500w, /zdjecia/spacer-rabata-m.webp 800w" sizes="(max-width: 760px) 40vw, 22vw" width="800" height="601" loading="lazy" alt="Grupa zwiedza rabaty podczas pleneru w ogrodzie">
         <div><h3>Odwiedzamy swoje ogrody</h3><p>Plenery w ogrodach członków to najlepsza lekcja ogrodnictwa.</p></div>
       </a>
       <a class="karta odslon" href="/konkurs/">
-        <img src="/zdjecia/jezowki-ludzie-m.webp" width="800" height="601" loading="lazy" alt="Uczestnicy pleneru wśród rabat z jeżówkami">
+        <img src="/zdjecia/jezowki-ludzie-m.webp" srcset="/zdjecia/jezowki-ludzie-s.webp 500w, /zdjecia/jezowki-ludzie-m.webp 800w" sizes="(max-width: 760px) 40vw, 22vw" width="800" height="601" loading="lazy" alt="Uczestnicy pleneru wśród rabat z jeżówkami">
         <div><h3>Prowadzimy konkurs ogrodowy</h3><p>Najpiękniejszy Ogród Gminy Czemierniki, z nagrodami i finałem na Dożynkach.</p></div>
+      </a>
+      <a class="karta odslon" href="/dolacz/">
+        <img src="/zdjecia/grupa-zlota-m.webp" srcset="/zdjecia/grupa-zlota-s.webp 500w, /zdjecia/grupa-zlota-m.webp 800w" sizes="(max-width: 760px) 40vw, 22vw" width="800" height="601" loading="lazy" alt="Uczestnicy spotkania Klubu w złotym świetle wieczoru">
+        <div><h3>Działamy dla mieszkańców</h3><p>Organizujemy lokalne akcje dla naszej społeczności i dla zieleni w gminie.</p></div>
       </a>
     </div>
   </div>
@@ -62,7 +75,7 @@
       <div>
         <h2>Zgłoś swój ogród do konkursu</h2>
         <p>Trwa pierwsza edycja konkursu <b>Najpiękniejszy Ogród Gminy Czemierniki</b>.
-        Temat: „Ogród przyjazny naturze". Zgłoszenia przyjmujemy do <b>niedzieli 16 sierpnia</b>,
+        Temat: „Ogród przyjazny naturze”. Zgłoszenia przyjmujemy do <b>niedzieli 16 sierpnia</b>,
         także online, prosto z tej strony.</p>
       </div>
       <a class="przycisk przycisk-duzy" href="/konkurs/#zgloszenie">Wyślij zgłoszenie</a>
@@ -77,17 +90,14 @@
       <p>Zdjęcia z plenerów w ogrodach członków Klubu.</p>
     </div>
     <div class="galeria" id="galeria">
-      <a href="/zdjecia/tecza-d.webp" class="g-szer"><img src="/zdjecia/tecza-m.webp" width="800" height="601" loading="lazy" alt="Tęcza nad ogrodem podczas lipcowego pleneru"></a>
-      <a href="/zdjecia/zadrzechnia-d.webp" class="g-wys"><img src="/zdjecia/zadrzechnia-m.webp" width="800" height="1065" loading="lazy" alt="Zadrzechnia fioletowa na kwiecie przetacznika, fiolet i zieleń jak w naszym logo"></a>
-      <a href="/zdjecia/palenisko-d.webp"><img src="/zdjecia/palenisko-m.webp" width="800" height="601" loading="lazy" alt="Ogrodowe palenisko otoczone rabatami"></a>
-      <a href="/zdjecia/ogrod-zloty-2-d.webp"><img src="/zdjecia/ogrod-zloty-2-m.webp" width="800" height="601" loading="lazy" alt="Rozmowy przy rabatach w złotym świetle"></a>
-      <a href="/zdjecia/aleja-formy-d.webp"><img src="/zdjecia/aleja-formy-m.webp" width="800" height="601" loading="lazy" alt="Aleja strzyżonych drzew w przydomowym ogrodzie"></a>
-      <a href="/zdjecia/niebo-spacer-d.webp"><img src="/zdjecia/niebo-spacer-m.webp" width="800" height="601" loading="lazy" alt="Spacer po ogrodzie pod dramatycznym niebem"></a>
-      <a href="/zdjecia/hustawka-d.webp" class="g-szer"><img src="/zdjecia/hustawka-m.webp" width="800" height="601" loading="lazy" alt="Ogród z huśtawką i rabatami traw"></a>
-      <a href="/zdjecia/koty-d.webp" class="g-szer"><img src="/zdjecia/koty-m.webp" width="800" height="601" loading="lazy" alt="Dwa koty odpoczywają na kamieniach w odwiedzanym ogrodzie"></a>
-      <a href="/zdjecia/tecza-parasolki-d.webp"><img src="/zdjecia/tecza-parasolki-m.webp" width="800" height="601" loading="lazy" alt="Klubowicze pod kolorowymi parasolkami, nad ogrodem tęcza"></a>
-      <a href="/zdjecia/grupa-zlota-d.webp"><img src="/zdjecia/grupa-zlota-m.webp" width="800" height="601" loading="lazy" alt="Uczestnicy pleneru w złotym świetle na tle burzowego nieba"></a>
-      <a href="/zdjecia/ogrod-panorama-d.webp" class="g-szer"><img src="/zdjecia/ogrod-panorama-m.webp" width="800" height="450" loading="lazy" alt="Panorama odwiedzanego ogrodu, w głębi grupa uczestników pleneru"></a>
+      {{ range site.Data.galeria }}
+      {{/* kafelek szeroki zajmuje dwie kolumny, więc prosi o dwa razy większy plik */}}
+      <a href="/zdjecia/{{ .plik }}-d.webp"{{ with .klasa }} class="{{ . }}"{{ end }}><img
+        src="/zdjecia/{{ .plik }}-m.webp"
+        srcset="/zdjecia/{{ .plik }}-s.webp 500w, /zdjecia/{{ .plik }}-m.webp 800w"
+        sizes="{{ if eq .klasa "g-szer" }}(max-width: 980px) 92vw, 48vw{{ else }}(max-width: 980px) 46vw, 24vw{{ end }}"
+        width="{{ .w }}" height="{{ .h }}" loading="lazy" decoding="async" alt="{{ .alt }}"></a>
+      {{ end }}
     </div>
   </div>
 </section>
@@ -100,14 +110,14 @@
     </div>
     <div class="partnerzy">
       <div class="partner odslon">
-        <span class="rola">Honorowy Patronat</span>
+        <span class="rola">Patronat i 1.000 zł na nagrody</span>
         <h3>Burmistrz Gminy Czemierniki</h3>
-        <p>Arkadiusz Filipek objął Honorowym Patronatem konkurs Najpiękniejszy Ogród Gminy Czemierniki 2026.</p>
+        <p>Arkadiusz Filipek objął konkurs Honorowym Patronatem i przekazał 1.000 zł na nagrody, które trafią do zdobywców II i III miejsca. Także w formie voucherów do Szkółki Ania, więc całe wsparcie zostaje u lokalnego przedsiębiorcy.</p>
       </div>
       <div class="partner odslon">
-        <span class="rola">Fundator nagród</span>
+        <span class="rola">Fundator nagrody głównej</span>
         <h3>Szkółka Roślin Ozdobnych Ania</h3>
-        <p>Vouchery o wartości 2.000 zł na nagrody dla laureatów. Właścicielka zasiada w komisji konkursowej.</p>
+        <p>Voucher o wartości 1.000 zł dla zwycięzcy konkursu. Właścicielka zasiada w komisji konkursowej.</p>
       </div>
       <div class="partner odslon">
         <span class="rola">Komisja konkursowa</span>
@@ -115,7 +125,7 @@
         <p>Barbara Jul-Borkowska wspiera konkurs swoim doświadczeniem w komisji konkursowej.</p>
       </div>
     </div>
-    <p style="margin-top:1.6rem"><a class="przycisk przycisk-2" href="/sponsorzy/">Zobacz, co dajemy partnerom</a></p>
+    <p style="margin-top:1.6rem"><a class="przycisk przycisk-2" href="/sponsorzy/">Zobacz, co oferujemy naszym partnerom</a></p>
   </div>
 </section>
 

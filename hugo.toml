@@ -5,12 +5,14 @@ title = 'Klub Pasjonatów Ogrodnictwa'
 enableRobotsTXT = true
 
 [params]
-  opis = 'Klub Pasjonatów Ogrodnictwa przy Kole Gospodyń Wiejskich Czemierniki. Spotkania, plenery i konkursy. Udział bezpłatny.'
+  opis = 'Klub Pasjonatów Ogrodnictwa działa przy Kole Gospodyń Wiejskich Czemierniki. Spotkania, konkursy, plenery, lokalna pomoc, wymiana nasionami i sadzonkami. Udział całkowicie darmowy.'
   telefon = '795 716 644'
   email = 'kgw.czemierniki@gmail.com'
-  facebook = 'https://facebook.com/kgw.czemierniki'
-  # umami = 'https://statystyki.czemierniki.org/script.js'   # odkomentuj po wdrożeniu Umami
-  # umamiId = ''
+  facebook = 'https://www.facebook.com/kgw.czemierniki'
+  # Statystyki: skrypt z własnej domeny (Traefik przepuszcza tylko /statystyki/script.js
+  # i /statystyki/api/send do kontenera umami). Panel: https://statystyki.czemierniki.org
+  umami = '/statystyki/script.js'
+  umamiId = '5ecb769b-ea35-4d27-9cc8-8210c11a2b0c'
 
 [markup.goldmark.renderer]
   unsafe = true

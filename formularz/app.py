@@ -4,7 +4,7 @@ Każde zgłoszenie jest zapisywane na dysku (wolumen /dane), a następnie wysył
 e-mailem, jeśli skonfigurowano SMTP w zmiennych środowiskowych:
 
   SMTP_HOST, SMTP_PORT (587 = STARTTLS, 465 = SSL), SMTP_USER, SMTP_PASS,
-  MAIL_TO (domyślnie bartosz.michalski@fg.pl), MAIL_FROM (domyślnie SMTP_USER)
+  MAIL_TO (domyślnie kgw.czemierniki@gmail.com), MAIL_FROM (domyślnie SMTP_USER)
 
 Bez konfiguracji SMTP zgłoszenia lądują tylko na dysku i w logu pojawia się
 ostrzeżenie. Dysk jest zawsze pierwszy: zgłoszenie mieszkańca nie może
@@ -30,7 +30,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("formularz")
 
 KATALOG = Path(os.environ.get("KATALOG_ZGLOSZEN", "/dane/zgloszenia"))
-MAIL_TO = os.environ.get("MAIL_TO", "bartosz.michalski@fg.pl")
+MAIL_TO = os.environ.get("MAIL_TO", "kgw.czemierniki@gmail.com")
 
 WYMAGANE = ["imie_nazwisko", "adres", "telefon", "opis"]
 POLA = [
@@ -44,6 +44,7 @@ POLA = [
     ("wl_adres_ogrodu", "Adres ogrodu (właściciel)"),
     ("wl_telefon", "Telefon właściciela"),
     ("opis", "Opis ogrodu"),
+    ("osw_wykorzystanie", "Zgoda na publikację zdjęć, opisu i wizerunku"),
 ]
 
 # ponytail: limit zgłoszeń per IP trzymany w pamięci procesu; przy jednym
@@ -84,6 +85,8 @@ def zgloszenie():
         return jsonify(ok=False, blad="Za dużo zgłoszeń z tego adresu. Spróbuj za godzinę."), 429
 
     dane = {klucz: request.form.get(klucz, "").strip() for klucz, _ in POLA}
+    # zgoda na wizerunek jest dobrowolna, ale musi dać się wykazać (art. 7 ust. 1 RODO)
+    dane["osw_wykorzystanie"] = "TAK" if request.form.get("osw_wykorzystanie") else "NIE"
     braki = [k for k in WYMAGANE if not dane[k]]
     if braki:
         return jsonify(ok=False, blad="Brakuje wymaganych pól: " + ", ".join(braki)), 400
@@ -140,7 +143,9 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
     for klucz, etykieta in POLA:
         if dane[klucz]:
             linie.append(f"{etykieta}: {dane[klucz]}")
-    linie += ["", "Oświadczenia sekcji E zaznaczone w formularzu (wszystkie wymagane).",
+    linie += ["",
+              "Oświadczenie z karty zgłoszeniowej (regulamin, klauzula RODO, prawa autorskie "
+              "do zdjęć, brak powiązania z Komisją) zostało zaznaczone jako wymagane.",
               f"Kopia zgłoszenia na serwerze: {folder}"]
     wiadomosc.set_content("\n".join(linie))
 
@@ -185,8 +190,11 @@ def kontakt():
                    ensure_ascii=False, indent=2), encoding="utf-8")
     log.info("Zapisano wiadomość (%s) od: %s", temat, imie)
 
-    tytul = (f"Klub Pasjonatów: {imie} chce dołączyć" if temat == "dolacz"
-             else f"Wiadomość ze strony Klubu od {imie}")
+    tytuly = {
+        "dolacz": f"Klub Pasjonatów: {imie} chce dołączyć",
+        "sponsor": f"WSPÓŁPRACA: {imie} pyta o partnerstwo z Klubem",
+    }
+    tytul = tytuly.get(temat, f"Wiadomość ze strony Klubu od {imie}")
     tresc = "\n".join([
         f"Wiadomość wysłana przez formularz na stronie {kiedy:%d.%m.%Y o %H:%M}.",
         "",

@@ -45,18 +45,26 @@
   --tekst: #453A54;
   --tekst-2: #6B6078;
   --linia: #E9E2F1;
+  /* ramka pola formularza musi mieć 3:1 wobec bieli (WCAG 1.4.11), inaczej senior
+     na telefonie w słońcu nie widzi, gdzie zaczyna się pole */
+  --linia-pola: #9B86BC;
   --bialy: #FFFFFF;
   --naglowki: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
   --tekstowa: 'Manrope', 'Segoe UI', sans-serif;
   --cien-1: 0 1px 2px rgba(70, 21, 113, .06), 0 4px 16px rgba(70, 21, 113, .07);
   --cien-2: 0 2px 4px rgba(70, 21, 113, .08), 0 12px 32px rgba(70, 21, 113, .14);
   --luk: 18px;
+  --luk-panel: 22px;
+  --luk-foto: clamp(20px, 2.4vw, 32px);
+  --odstep-hero: clamp(1.75rem, 3.5vw, 2.75rem);
   --przej: .25s cubic-bezier(.16, 1, .3, 1);
+  --luz: cubic-bezier(.16, 1, .3, 1);
 }
 
 /* ---------- Baza ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 [id] { scroll-margin-top: 92px; }
 body {
   margin: 0;
@@ -69,6 +77,8 @@ body {
 }
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--f700); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+/* numer telefonu w zdaniu nie może się dzielić na dwa wiersze przy spacji */
+a[href^="tel:"] { white-space: nowrap; }
 a:hover { color: var(--f800); }
 h1, h2, h3, h4 {
   font-family: var(--naglowki);
@@ -99,12 +109,16 @@ strong, b { color: var(--atrament); font-weight: 700; }
 }
 .gora .szeroko { display: flex; align-items: center; gap: .9rem; min-height: 72px; }
 .godlo { width: 50px; height: 50px; flex: none; transition: transform var(--przej); }
+/* to kotwica jest elementem flex, nie sam obrazek: bez tego przy 320 px ściskała się
+   do 39 px i okrągła odznaka robiła się elipsą */
+.gora .szeroko > a:first-child { flex: none; }
 a:hover > .godlo { transform: rotate(-8deg); }
 .marka {
   font-family: var(--naglowki); font-weight: 700; font-size: 1.02rem; line-height: 1.15;
   color: var(--atrament); text-decoration: none; letter-spacing: -.01em;
+  display: inline-block; padding-block: .45rem;
 }
-.marka small { display: block; font-family: var(--tekstowa); font-weight: 600; font-size: .72rem;
+.marka small { display: block; font-family: var(--tekstowa); font-weight: 600; font-size: .78rem;
   color: var(--z700); text-transform: uppercase; letter-spacing: .14em; }
 .menu { margin-left: auto; display: flex; align-items: center; gap: 1.4rem; }
 .menu a {
@@ -113,25 +127,46 @@ a:hover > .godlo { transform: rotate(-8deg); }
 }
 .menu a:hover { color: var(--f800); border-bottom-color: var(--f300); }
 .menu a[aria-current="page"] { color: var(--f800); border-bottom-color: var(--f700); }
-.menu a.przycisk { border-bottom: none; padding: .55rem 1.15rem; color: #fff; }
+.menu a.przycisk {
+  border-bottom: none; padding: .55rem 1.15rem; color: #fff;
+  /* .menu a nadpisywało transition przycisku: bez tego guzik w nagłówku nie animował się */
+  transition: background .3s var(--luz), transform .3s var(--luz), box-shadow .3s var(--luz);
+}
 .menu a.przycisk:hover { color: #fff; }
 .menu-guzik { display: none; }
 
 /* ---------- Przyciski ---------- */
 .przycisk {
+  --poswiata: 70, 21, 113;
+  position: relative; overflow: hidden; isolation: isolate;
   display: inline-block; font-family: var(--tekstowa); font-weight: 700; font-size: 1rem;
+  text-align: center;
   color: #fff; background: var(--f700); border: none; border-radius: 999px;
   padding: .8rem 1.7rem; text-decoration: none; cursor: pointer;
-  box-shadow: var(--cien-1); transition: background var(--przej), transform var(--przej), box-shadow var(--przej);
+  box-shadow: var(--cien-1);
+  transition: background .3s var(--luz), transform .3s var(--luz), box-shadow .3s var(--luz);
 }
-.przycisk:hover { background: var(--f800); color: #fff; box-shadow: var(--cien-2); transform: translateY(-1px); }
-.przycisk:active { transform: translateY(1px) scale(.99); }
+/* delikatne rozjaśnienie górnej krawędzi zamiast samej zmiany koloru tła */
+.przycisk::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, 0) 62%);
+  opacity: 0; transition: opacity .3s var(--luz);
+}
+.przycisk:hover {
+  background: var(--f800); color: #fff; transform: translateY(-2px);
+  box-shadow: 0 12px 26px -10px rgba(var(--poswiata), .6), 0 2px 6px rgba(var(--poswiata), .18);
+}
+.przycisk:hover::after { opacity: 1; }
+.przycisk:active { transform: translateY(0) scale(.985); box-shadow: var(--cien-1); }
 .przycisk-2 {
   background: var(--bialy); color: var(--f800); border: 2px solid var(--f200);
   box-shadow: none;
 }
-.przycisk-2:hover { background: var(--f50); color: var(--f900); border-color: var(--f300); }
-.przycisk-ziel { background: var(--z700); }
+.przycisk-2:hover {
+  background: var(--f50); color: var(--f900); border-color: var(--f300);
+  box-shadow: 0 10px 22px -12px rgba(var(--poswiata), .45);
+}
+.przycisk-ziel { --poswiata: 58, 115, 34; background: var(--z700); }
 .przycisk-ziel:hover { background: var(--z800); }
 .przycisk-duzy { font-size: 1.1rem; padding: 1rem 2.2rem; }
 .przyciski { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
@@ -140,7 +175,12 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .znaczek {
   display: inline-flex; align-items: center; gap: .45rem;
   font-size: .86rem; font-weight: 700; line-height: 1.2;
-  padding: .42rem .95rem; border-radius: 999px;
+  padding: .42rem .95rem;
+  /* promień w em, nie 999px: w jednej linii wychodzi pełna pigułka, a długi znaczek
+     zawinięty na telefonie na dwa wiersze zostaje prostokątem z łagodnym łukiem,
+     zamiast rozdętej kapsuły. Wyśrodkowanie i balance dzielą go po równo,
+     zamiast zostawiać samotne „Czemierniki” w drugim wierszu. */
+  border-radius: 1.45em; text-align: center; text-wrap: balance;
 }
 .znaczek-f { background: var(--f100); color: var(--f800); }
 .znaczek-z { background: var(--z100); color: var(--z800); }
@@ -157,31 +197,52 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .bohater .szeroko {
   display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
   gap: clamp(2rem, 5vw, 4.5rem); align-items: center;
-  padding-top: clamp(2.5rem, 6vw, 5rem); padding-bottom: clamp(2.5rem, 6vw, 5rem);
+  padding-top: clamp(2.2rem, 4.6vw, 3.9rem); padding-bottom: var(--odstep-hero);
 }
 .bohater h1 { margin-bottom: .55em; }
 .bohater h1 em { font-style: normal; color: var(--f700); }
 .bohater .zajawka { font-size: 1.2rem; line-height: 1.55; max-width: 34rem; margin-bottom: 1.6em; }
 .bohater-foto { position: relative; }
-.bohater-foto > img {
-  width: 100%; aspect-ratio: 4 / 4.6; object-fit: cover;
-  border-radius: 999px 999px var(--luk) var(--luk);
+/* miękka poświata w barwach znaku zamiast łuku: zdjęcie zostaje bohaterem kadru */
+.bohater-foto::before {
+  content: ""; position: absolute; inset: 8% -5% -6% -5%; z-index: 0;
+  border-radius: 50%; filter: blur(38px); opacity: .55;
+  background: radial-gradient(60% 60% at 30% 40%, var(--z200), transparent 70%),
+              radial-gradient(60% 60% at 75% 65%, var(--f200), transparent 70%);
+}
+.bohater-foto > img:not(.bohater-znak) {
+  position: relative; z-index: 1;
+  width: 100%; aspect-ratio: 4 / 3.6; object-fit: cover;
+  border-radius: var(--luk-foto);
   box-shadow: var(--cien-2);
 }
 .bohater-plakietka {
-  position: absolute; left: -1.2rem; bottom: 1.6rem;
+  position: absolute; z-index: 2; left: -1.2rem; bottom: 1.6rem;
   background: var(--bialy); border-radius: 14px; box-shadow: var(--cien-2);
   padding: .8rem 1.1rem; display: flex; align-items: center; gap: .7rem;
   font-size: .92rem; font-weight: 600; color: var(--tekst);
 }
 .bohater-plakietka b { font-family: var(--naglowki); font-size: 1.35rem; color: var(--z700); line-height: 1; }
+.bohater-znak {
+  position: absolute; z-index: 2; right: -1rem; bottom: 1.6rem; width: 128px; height: 128px;
+  background: rgba(255, 255, 255, .94); border-radius: 50%; padding: 9px;
+  box-shadow: var(--cien-2);
+}
 
 /* ---------- Sekcje ---------- */
-.sekcja { padding-block: clamp(1.75rem, 3.6vw, 2.75rem); }
+.sekcja { padding-block: clamp(1.5rem, 3vw, 2.15rem); }
+/* pod nagłówkiem strony biegnie linia podziału: odstęp nad nią i pod nią jest równy
+   (tę samą wartość biorą paddingi dolne obu rodzajów nagłówka) */
+:is(.bohater, .strona-glowa) + .sekcja { padding-top: var(--odstep-hero); }
+/* dwie sekcje na tym samym tle nie potrzebują pełnego oddechu z obu stron:
+   bez tej reguły styk dwóch białych sekcji robił ~90 px pustki */
+.sekcja:not([class*=" sekcja-"]) + .sekcja:not([class*=" sekcja-"]) {
+  padding-top: clamp(.5rem, 1.2vw, .9rem);
+}
 .sekcja-f { background: linear-gradient(180deg, var(--f50), var(--bialy)); }
 .sekcja-z { background: linear-gradient(180deg, var(--z50), var(--bialy)); }
-.sekcja-naglowek { max-width: 44rem; margin-bottom: clamp(1.25rem, 2.5vw, 1.4rem); }
-.sekcja-naglowek p { font-size: 1.12rem; color: var(--tekst-2); }
+.sekcja-naglowek { max-width: 54rem; margin-bottom: clamp(1.25rem, 2.5vw, 1.4rem); }
+.sekcja-naglowek p { font-size: 1.12rem; color: var(--tekst-2); text-wrap: pretty; }
 /* ogony ostatnich akapitów i list sumowały się z paddingiem sekcji */
 .sekcja :is(p, ul, ol):last-child { margin-bottom: 0; }
 /* sekcja z banerem CTA: baner ma własny padding wewnętrzny, sekcja nie musi go dublować */
@@ -190,7 +251,7 @@ a:hover > .godlo { transform: rotate(-8deg); }
 /* ---------- Kafle faktów ---------- */
 .fakty-kafle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
 .kafel {
-  border-radius: var(--luk); padding: 1.5rem 1.6rem;
+  border-radius: var(--luk-panel); padding: 1.6rem 1.7rem;
   display: flex; flex-direction: column; gap: .3rem; justify-content: center;
 }
 .kafel b { font-family: var(--naglowki); font-size: clamp(1.4rem, 2.6vw, 1.9rem); font-weight: 800; line-height: 1.15; }
@@ -199,18 +260,20 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .kafel-z { background: var(--z100); } .kafel-z b { color: var(--z800); } .kafel-z span { color: var(--z800); }
 .kafel-k { background: var(--bialy); border: 1.5px solid var(--linia); } .kafel-k b { color: var(--atrament); }
 
-/* ---------- Karty „co robimy" ---------- */
-.karty { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
+/* ---------- Karty „co robimy” ---------- */
+/* karta jest ramką: zdjęcie leży w środku z własnym zaokrągleniem */
+.karty { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.1rem; }
 .karta {
-  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
+  background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
+  border-radius: var(--luk-panel); padding: 8px;
   overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column;
   transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
 }
 .karta:hover { transform: translateY(-4px); box-shadow: var(--cien-2); border-color: var(--f200); }
-.karta img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
-.karta > div { padding: 1.1rem 1.2rem 1.3rem; }
-.karta h3 { font-size: 1.08rem; margin-bottom: .35em; }
-.karta p { font-size: .94rem; color: var(--tekst-2); margin: 0; }
+.karta img { aspect-ratio: 4 / 3.2; object-fit: cover; width: 100%; border-radius: 13px; }
+.karta > div { padding: .9rem .65rem 1rem; }
+.karta h3 { font-size: 1.05rem; margin-bottom: .35em; }
+.karta p { font-size: .92rem; color: var(--tekst-2); margin: 0; }
 
 /* ---------- Pas konkursowy (CTA) ---------- */
 .pas {
@@ -233,11 +296,12 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .pas p { margin: 0; font-size: 1.08rem; max-width: 36rem; }
 .pas b { color: #fff; }
 .pas .przycisk { background: #fff; color: var(--f800); }
-.pas .przycisk:hover { background: var(--f100); color: var(--f900); }
+.pas .przycisk:hover { background: #fff; color: var(--f900); box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .55); }
+.pas .przycisk::after { background: linear-gradient(180deg, rgba(206, 119, 214, .16), rgba(206, 119, 214, 0) 62%); }
 
 /* ---------- Galeria ---------- */
 .galeria { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 210px; gap: 1rem; }
-.galeria a { border-radius: 14px; overflow: hidden; display: block; position: relative; }
+.galeria a { border-radius: var(--luk); overflow: hidden; display: block; position: relative; }
 .galeria img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
 .galeria a:hover img { transform: scale(1.045); }
 .galeria .g-szer { grid-column: span 2; }
@@ -247,18 +311,40 @@ dialog.podglad {
   background: var(--f950); box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
 }
 dialog.podglad::backdrop { background: rgba(26, 8, 46, .82); backdrop-filter: blur(4px); }
+/* bez tego strona pod otwartym podglądem przewija się palcem razem ze zdjęciem */
+body:has(dialog.podglad[open]) { overflow: hidden; }
 dialog.podglad img { max-height: 84vh; width: auto; max-width: 100%; margin-inline: auto; }
-dialog.podglad button {
-  position: absolute; top: .6rem; right: .6rem; width: 40px; height: 40px; border-radius: 50%;
-  border: none; background: rgba(255, 255, 255, .92); color: var(--f900);
-  font-size: 1.3rem; font-weight: 700; cursor: pointer; line-height: 1;
+/* nawigacja podglądu jest przygaszona, żeby nie zabierała uwagi zdjęciu;
+   pełną widoczność dostaje dopiero pod kursorem i przy dostępie z klawiatury */
+dialog.podglad :is(.p-zamknij, .p-strzalka) {
+  position: absolute; border: none; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, .16); color: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  transition: background var(--przej), color var(--przej), box-shadow var(--przej);
+}
+dialog.podglad .p-zamknij { top: .6rem; right: .6rem; width: 44px; height: 44px; }
+dialog.podglad .p-zamknij svg { width: 20px; height: 20px; }
+dialog.podglad .p-strzalka { top: 50%; margin-top: -27px; width: 54px; height: 54px; }
+dialog.podglad .p-strzalka svg { width: 26px; height: 26px; }
+dialog.podglad .p-poprz { left: .8rem; }
+dialog.podglad .p-nast { right: .8rem; }
+dialog.podglad .p-nast svg { transform: rotate(180deg); }
+dialog.podglad :is(.p-strzalka, .p-zamknij):is(:hover, :focus-visible) {
+  background: #fff; color: var(--f900); box-shadow: 0 4px 18px rgba(0, 0, 0, .4);
+}
+dialog.podglad .p-licznik {
+  position: absolute; left: 50%; bottom: .8rem; transform: translateX(-50%);
+  margin: 0; padding: .3rem 1rem; border-radius: 999px;
+  background: rgba(36, 21, 51, .78); color: #fff; font-size: .82rem; font-weight: 700;
+  letter-spacing: .04em; white-space: nowrap;
 }
 
 /* ---------- Partnerzy ---------- */
 .partnerzy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
 .partner {
-  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
-  padding: 1.5rem 1.6rem;
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  box-shadow: var(--cien-1); padding: 1.6rem 1.7rem;
 }
 .partner .rola { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--z700); display: block; margin-bottom: .5rem; }
 .partner h3 { margin-bottom: .3em; }
@@ -266,6 +352,9 @@ dialog.podglad button {
 
 /* ---------- Nagłówek podstrony ---------- */
 .strona-glowa {
+  /* tak samo jak .bohater: rozmyta poświata pod zdjęciem wychodzi 6% poza kadr,
+     a przy jednej kolumnie na telefonie rozpychała stronę o 3 px w bok */
+  overflow: hidden;
   background:
     radial-gradient(48rem 26rem at 110% -30%, var(--f100) 0%, transparent 60%),
     radial-gradient(36rem 22rem at -10% 120%, var(--z50) 0%, transparent 55%),
@@ -275,32 +364,44 @@ dialog.podglad button {
 .strona-glowa .szeroko {
   display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
   gap: clamp(2rem, 5vw, 4rem); align-items: center;
-  padding-top: clamp(2.2rem, 5vw, 4rem); padding-bottom: clamp(1.9rem, 4vw, 3rem);
+  padding-top: clamp(2.2rem, 5vw, 4rem); padding-bottom: var(--odstep-hero);
 }
 .strona-glowa .znaczki { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 1.2rem; }
-.strona-glowa h1 em { color: var(--f700); }
+/* font-style: normal, bo Bricolage nie ma odmiany pochyłej i przeglądarka pochylała ją sama */
+.strona-glowa h1 em { font-style: normal; color: var(--f700); }
 .strona-glowa .zajawka { font-size: 1.16rem; max-width: 36rem; }
-.strona-glowa figure { margin: 0; }
+.strona-glowa figure { margin: 0; position: relative; }
+.strona-glowa figure:not(.figura-logo):not(.figura-znak)::before {
+  content: ""; position: absolute; inset: 8% -6% -7% -6%; z-index: 0;
+  border-radius: 50%; filter: blur(38px); opacity: .55;
+  background: radial-gradient(60% 60% at 30% 40%, var(--z200), transparent 70%),
+              radial-gradient(60% 60% at 75% 65%, var(--f200), transparent 70%);
+}
 .strona-glowa figure img {
-  aspect-ratio: 4 / 4.4; object-fit: cover; width: 100%;
-  border-radius: 999px 999px var(--luk) var(--luk); box-shadow: var(--cien-2);
+  position: relative; z-index: 1;
+  aspect-ratio: 4 / 3.4; object-fit: cover; width: 100%;
+  border-radius: var(--luk-foto); box-shadow: var(--cien-2);
 }
 .strona-glowa.bez-foto .szeroko { grid-template-columns: 1fr; }
-.strona-glowa figure.figura-logo { justify-self: center; }
+.strona-glowa figure:is(.figura-logo, .figura-znak) { justify-self: center; }
 .strona-glowa figure.figura-logo img {
-  aspect-ratio: auto; object-fit: contain; width: min(100%, 280px);
-  border-radius: 0; box-shadow: none;
+  aspect-ratio: 900 / 1205; object-fit: contain; width: min(100%, 280px);
+  border-radius: 0; box-shadow: none; margin-inline: auto;
+}
+.strona-glowa figure.figura-znak img {
+  aspect-ratio: 1; object-fit: contain; width: min(100%, 320px);
+  border-radius: 0; box-shadow: none; margin-inline: auto;
 }
 
 /* ---------- Oś czasu ---------- */
 .os { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; counter-reset: krok; }
 .os article {
-  position: relative; background: var(--bialy); border: 1px solid var(--linia);
-  border-radius: var(--luk); padding: 1.5rem 1.6rem 1.4rem;
+  position: relative; overflow: hidden; background: var(--bialy); border: 1px solid var(--linia);
+  border-radius: var(--luk-panel); box-shadow: var(--cien-1); padding: 1.5rem 1.6rem 1.4rem;
 }
+/* pasek akcentu przycina się zaokrągleniem karty (overflow wyżej), więc bez własnego łuku */
 .os article::before {
-  content: ""; position: absolute; inset: 0 auto 0 0; width: 5px;
-  border-radius: 99px 0 0 99px; background: var(--z400);
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--z400);
 }
 .os article:nth-child(2)::before { background: var(--f500); }
 .os article:nth-child(3)::before { background: var(--f800); }
@@ -310,7 +411,10 @@ dialog.podglad button {
 
 /* ---------- Kryteria i nagrody ---------- */
 .kryteria { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
-.kryterium { border-radius: var(--luk); padding: 1.4rem 1.5rem; background: var(--f50); border: 1px solid var(--f100); }
+.kryterium {
+  border-radius: var(--luk-panel); padding: 1.5rem 1.6rem;
+  background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
+}
 .kryterium b { font-family: var(--naglowki); font-size: 2rem; font-weight: 800; color: var(--f700); display: block; line-height: 1; margin-bottom: .5rem; }
 .kryterium:first-child { background: var(--z50); border-color: var(--z100); }
 .kryterium:first-child b { color: var(--z700); }
@@ -318,13 +422,21 @@ dialog.podglad button {
 
 .nagrody { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
 .nagroda {
-  text-align: center; border-radius: var(--luk); padding: 2rem 1.5rem 1.8rem;
-  background: var(--bialy); border: 1.5px solid var(--linia); position: relative;
+  text-align: center; border-radius: var(--luk-panel); padding: 1.9rem 1.5rem 1.5rem;
+  background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1); position: relative;
+  display: flex; flex-direction: column;
 }
-.nagroda:first-child { border-color: var(--f300); background: linear-gradient(180deg, var(--f50), var(--bialy)); }
+/* nagroda główna od szkółki: zieleń; druga i trzecia od Burmistrza: fiolet */
+.nagroda:first-child { border-color: var(--z200); background: linear-gradient(180deg, var(--z50), var(--bialy)); }
+.nagroda:first-child b { color: var(--z800); }
 .nagroda .miejsce { font-size: .82rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tekst-2); }
 .nagroda b { font-family: var(--naglowki); font-size: 2.3rem; font-weight: 800; color: var(--f800); display: block; margin: .3rem 0; }
-.nagroda p { margin: 0; font-size: .93rem; color: var(--tekst-2); }
+.nagroda p { margin: 0 0 auto; font-size: .93rem; color: var(--tekst-2); }
+.nagroda .fundator {
+  display: block; margin-top: 1.1rem; padding-top: .85rem; border-top: 1px solid var(--linia);
+  font-size: .82rem; font-weight: 700; line-height: 1.35; color: var(--f700);
+}
+.nagroda .fundator-z { color: var(--z700); }
 
 /* ---------- Listy z ptaszkami ---------- */
 ul.lista-ok { list-style: none; padding: 0; margin: 0 0 1em; }
@@ -342,6 +454,7 @@ ul.lista-ok li::before {
   background: var(--bialy); border: 1px solid var(--linia); border-radius: 22px;
   box-shadow: var(--cien-1); padding: clamp(1.4rem, 4vw, 2.6rem);
 }
+.formularz > :is(h2, h3):first-child { margin-bottom: 1.2rem; }
 .formularz fieldset { border: none; padding: 0; margin: 0 0 1.7rem; }
 .formularz fieldset > *:last-child { margin-bottom: 0; }
 .formularz legend {
@@ -354,12 +467,14 @@ ul.lista-ok li::before {
 .pole .podpowiedz { font-size: .85rem; color: var(--tekst-2); margin: .3rem 0 0; }
 .pole input[type="text"], .pole input[type="tel"], .pole input[type="email"], .pole textarea {
   width: 100%; font: inherit; color: var(--atrament);
-  border: 1.5px solid #D8CFE5; border-radius: 12px; padding: .7rem .9rem; background: var(--bialy);
+  border: 1.5px solid var(--linia-pola); border-radius: 12px; padding: .7rem .9rem; background: var(--bialy);
   transition: border-color var(--przej), box-shadow var(--przej);
 }
 .pole input:focus, .pole textarea:focus {
   outline: none; border-color: var(--f600); box-shadow: 0 0 0 3.5px var(--f100);
 }
+/* domyślna szara podpowiedź przeglądarki ma kontrast ok. 2,3:1 */
+.pole ::placeholder { color: var(--tekst-2); opacity: 1; }
 .pole textarea { min-height: 9.5rem; resize: vertical; }
 .pole input[type="file"] {
   width: 100%; font: inherit; font-size: .92rem; color: var(--tekst-2);
@@ -374,6 +489,12 @@ ul.lista-ok li::before {
   transition: background var(--przej);
 }
 .pole input[type="file"]:hover::file-selector-button { background: var(--f800); }
+/* Pułapka na roboty. Dawne left: -9999px rozpychało layout w bok na Androidzie
+   (Chrome liczył szerokość razem z elementem po lewej), więc pole chowamy przycięciem. */
+.pulapka {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
 .pole .blad-pola { display: none; font-size: .87rem; font-weight: 600; color: #A4243B; margin-top: .3rem; }
 .pole.ma-blad input, .pole.ma-blad textarea { border-color: #C4405A; }
 .pole.ma-blad .blad-pola { display: block; }
@@ -386,14 +507,30 @@ ul.lista-ok li::before {
   transition: border-color var(--przej), background var(--przej);
 }
 .wybor label:has(input:checked) { border-color: var(--f600); background: var(--f50); }
-.wybor input { accent-color: var(--f700); width: 1.15rem; height: 1.15rem; margin-top: .18rem; flex: none; }
+/* 1,5rem = 24 px: dolny próg celu dotykowego z WCAG 2.5.8, kciuk seniora też trafia */
+.wybor input { accent-color: var(--f700); width: 1.5rem; height: 1.5rem; margin-top: .05rem; flex: none; }
 
 .zgody label {
-  display: flex; gap: .7rem; align-items: flex-start; font-size: .92rem; font-weight: 500;
+  display: flex; gap: .7rem; align-items: flex-start; font-size: .96rem; font-weight: 500;
   margin-bottom: .8rem; cursor: pointer;
 }
-.zgody input { accent-color: var(--f700); width: 1.1rem; height: 1.1rem; margin-top: .22rem; flex: none; }
+.zgody input { accent-color: var(--f700); width: 1.5rem; height: 1.5rem; margin-top: .1rem; flex: none; }
 .zgody label > span { flex: 1; }
+/* każda zgoda w ramce z etykietą: od razu widać, co obowiązkowe, a co nie */
+.zgody .zgoda {
+  border: 1.5px solid var(--linia); border-radius: 14px; padding: .9rem 1.05rem;
+  margin-bottom: .7rem; transition: border-color var(--przej), background var(--przej);
+}
+.zgody .zgoda:has(input:checked) { border-color: var(--f300); background: var(--f50); }
+.zgody .zgoda.ma-blad { border-color: #C4405A; background: #FDF0F3; }
+.zgody .zgoda-tag {
+  display: block; width: fit-content; margin-bottom: .4rem; padding: .16rem .6rem;
+  border-radius: 999px; font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.zgody .zgoda-wymagana .zgoda-tag { background: var(--f100); color: var(--f800); }
+.zgody .zgoda-dobrowolna .zgoda-tag { background: var(--z100); color: var(--z800); }
+.zgody .zgoda small { display: block; margin-top: .45rem; font-size: .88rem; color: var(--tekst-2); }
 
 /* zdjęcia w formularzu */
 .wrzutnia {
@@ -407,8 +544,8 @@ ul.lista-ok li::before {
 .miniatury figure { margin: 0; position: relative; }
 .miniatury img { aspect-ratio: 1; object-fit: cover; border-radius: 10px; width: 100%; }
 .miniatury button {
-  position: absolute; top: -.45rem; right: -.45rem; width: 26px; height: 26px; border-radius: 50%;
-  border: 2px solid #fff; background: var(--f800); color: #fff; font-size: .95rem; line-height: 1;
+  position: absolute; top: -.5rem; right: -.5rem; width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid #fff; background: var(--f800); color: #fff; font-size: 1.2rem; line-height: 1;
   cursor: pointer; box-shadow: var(--cien-1);
 }
 .licznik-zdjec { font-weight: 700; font-size: .92rem; margin-top: .6rem; }
@@ -416,6 +553,8 @@ ul.lista-ok li::before {
 .licznik-zdjec.za-malo { color: #A4243B; }
 
 .formularz .wyslij { width: 100%; font-size: 1.15rem; padding: 1.05rem; margin-top: 1.5rem; }
+/* w krótkim formularzu ostatnie pole ma już swój margines, 1,5rem robiło dziurę */
+.formularz-mini .wyslij { margin-top: .35rem; }
 .formularz .wyslij[disabled] { opacity: .6; cursor: wait; transform: none; }
 .pasek-wysylki { height: 8px; border-radius: 99px; background: var(--f100); overflow: hidden; margin-top: 1rem; display: none; }
 .pasek-wysylki > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--z400), var(--f600)); transition: width .3s ease; }
@@ -448,7 +587,8 @@ ul.lista-ok li::before {
   --akcent: var(--f700); --akcent-mocny: var(--f900);
   --akcent-tlo: var(--f100); --akcent-linia: var(--f200);
   position: relative; overflow: hidden;
-  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  box-shadow: var(--cien-1);
   transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
 }
 .swiadczenie-z {
@@ -474,7 +614,7 @@ ul.lista-ok li::before {
 .swiadczenie ul { list-style: none; margin: 0; padding: .5rem 1.35rem 1.15rem; flex: 1; }
 .swiadczenie li {
   position: relative; padding: .5rem 0 .5rem 1.35rem;
-  font-size: .95rem; line-height: 1.42; color: var(--tekst);
+  font-size: .95rem; line-height: 1.55; color: var(--tekst);
 }
 .swiadczenie li + li { border-top: 1px solid var(--linia); }
 .swiadczenie li::before {
@@ -490,15 +630,19 @@ ul.lista-ok li::before {
 .katalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
 .katalog .pozycja {
   display: flex; gap: 1rem; align-items: baseline; background: var(--bialy);
-  border: 1px solid var(--linia); border-radius: 14px; padding: .95rem 1.2rem;
+  border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  box-shadow: var(--cien-1); padding: 1.05rem 1.3rem;
 }
 .katalog .kod { font-family: var(--naglowki); font-weight: 800; color: var(--f700); flex: none; font-size: .95rem; }
 .katalog p { margin: 0; font-size: .96rem; }
 .katalog p i { color: var(--tekst-2); font-size: .87rem; }
 .drogi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
 .drogi-3 { grid-template-columns: repeat(3, 1fr); }
-.droga { border-radius: var(--luk); padding: 1.4rem 1.5rem; background: var(--z50); border: 1px solid var(--z100); }
-.droga:nth-child(2n) { background: var(--f50); border-color: var(--f100); }
+.droga {
+  border-radius: var(--luk-panel); padding: 1.5rem 1.6rem;
+  background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
+}
+
 .droga h3 { font-size: 1.04rem; }
 .droga p { margin: 0; font-size: .92rem; color: var(--tekst-2); }
 
@@ -507,19 +651,20 @@ ul.lista-ok li::before {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(1.2rem, 3vw, 2.4rem); align-items: center;
   background: linear-gradient(120deg, var(--z50), var(--f50));
-  border: 1.5px solid var(--z200); border-radius: var(--luk);
-  padding: clamp(1.3rem, 3vw, 2rem); margin-bottom: 1.1rem;
+  border: 1px solid var(--linia); border-radius: var(--luk-panel); box-shadow: var(--cien-1);
+  padding: clamp(1.4rem, 3vw, 2.1rem); margin-bottom: 1.1rem;
 }
 .droga-glowna h3 { font-size: 1.25rem; }
 .droga-glowna > div > p { margin: 0; font-size: .97rem; color: var(--tekst); }
 .konto {
-  background: var(--bialy); border: 1px solid var(--linia); border-radius: 14px;
-  padding: 1.2rem 1.4rem; box-shadow: var(--cien-1);
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  padding: 1.3rem 1.5rem; box-shadow: var(--cien-1);
 }
 .konto .etykieta {
   display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase;
   letter-spacing: .1em; color: var(--z700); margin-bottom: .3rem;
 }
+.konto .bank { display: block; font-size: .9rem; font-weight: 600; color: var(--tekst-2); margin-bottom: .2rem; }
 .konto b {
   font-family: var(--naglowki); font-weight: 800; font-size: clamp(1.02rem, 2.2vw, 1.3rem);
   color: var(--f800); display: block; letter-spacing: .015em; overflow-wrap: anywhere;
@@ -529,8 +674,8 @@ ul.lista-ok li::before {
 /* ---------- Dane kontaktowe ---------- */
 .kontakt-dane { display: grid; gap: 1rem; align-content: start; }
 .kontakt-pozycja {
-  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk);
-  padding: 1.3rem 1.5rem;
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  box-shadow: var(--cien-1); padding: 1.4rem 1.6rem;
 }
 .kontakt-pozycja .etykieta {
   display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase;
@@ -539,21 +684,32 @@ ul.lista-ok li::before {
 .kontakt-pozycja .wartosc {
   font-family: var(--naglowki); font-weight: 700; font-size: 1.3rem; color: var(--f800);
   text-decoration: none; overflow-wrap: anywhere;
+  /* linia tekstu ma 25 px wysokości, a to za mało jak na cel dotykowy */
+  display: inline-block; padding-block: .45rem;
 }
 .kontakt-pozycja a.wartosc:hover { color: var(--f900); text-decoration: underline; }
 .kontakt-pozycja p { margin: .35rem 0 0; font-size: .9rem; color: var(--tekst-2); }
 
 /* ---------- Kontakt wyróżniony ---------- */
 .kontakt-blok {
-  background: var(--bialy); border: 1.5px solid var(--f200); border-radius: 22px;
-  padding: clamp(1.6rem, 4vw, 2.6rem); text-align: center; box-shadow: var(--cien-1);
+  background: var(--bialy); border: 1px solid var(--linia); border-radius: var(--luk-panel);
+  padding: clamp(1.5rem, 4vw, 2.3rem); text-align: center; box-shadow: var(--cien-1);
+  align-self: start;
+}
+.kontakt-blok .etykieta {
+  display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--z700); margin-bottom: .5rem;
 }
 .kontakt-blok .tel-duzy {
-  font-family: var(--naglowki); font-weight: 800; font-size: clamp(1.9rem, 5vw, 2.8rem);
-  color: var(--f800); text-decoration: none; letter-spacing: .01em; display: inline-block; margin-bottom: .4rem;
+  font-family: var(--naglowki); font-weight: 800; font-size: clamp(1.9rem, 4.4vw, 2.5rem);
+  color: var(--f800); text-decoration: none; letter-spacing: .01em; display: inline-block; margin-bottom: .2rem;
 }
 .kontakt-blok .tel-duzy:hover { color: var(--f900); }
 .kontakt-blok p { margin: .2rem 0; }
+/* e-mail w bloku kontaktowym stał w linii 23 px wysokości: poniżej progu dotykowego */
+.kontakt-blok p > a { display: inline-flex; align-items: center; min-height: 44px; }
+.kontakt-blok .kontakt-blok-osoba { font-size: .92rem; color: var(--tekst-2); margin-bottom: .9rem; }
+.kontakt-blok .druk-info { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--linia); }
 
 /* ---------- Stopka ---------- */
 .dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(1.5rem, 3vw, 2rem); }
@@ -565,21 +721,58 @@ ul.lista-ok li::before {
 }
 .dol h4 { color: #fff; font-size: .95rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .9rem; }
 .dol .o-klubie { display: flex; gap: 1.1rem; align-items: flex-start; }
-.dol .o-klubie img { width: 84px; flex: none; }
+/* odznaka jest przezroczysta, a stopka ciemna: krążek bieli robi jej tło */
+.dol .o-klubie img { width: 96px; flex: none; background: var(--bialy); border-radius: 50%; padding: 7px; }
 .dol .o-klubie p { font-size: .95rem; margin: 0; }
 .dol ul { list-style: none; margin: 0; padding: 0; }
 .dol li { margin-bottom: .5rem; font-size: .95rem; }
-.dol .dane { font-size: .85rem; color: #A891C4; }
-.dol-pasek { border-top: 1px solid rgba(255, 255, 255, .12); padding-block: 1.1rem; font-size: .85rem; color: #A891C4; }
-.dol-pasek .szeroko { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; justify-content: space-between; }
+.dol .dane { font-size: .9rem; color: #A891C4; line-height: 1.75; }
+
+.dol-kontakt { display: grid; gap: .35rem; }
+.dol-kontakt li { margin: 0; }
+.dol-kontakt a {
+  display: flex; align-items: center; gap: .8rem; text-decoration: none;
+  padding: .5rem .7rem; margin-left: -.7rem; border-radius: 14px;
+  transition: background var(--przej);
+}
+.dol-kontakt a:hover { background: rgba(255, 255, 255, .08); }
+.dol-kontakt .ikona {
+  flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .09); color: #D9C4EE; transition: background var(--przej), color var(--przej);
+}
+.dol-kontakt .ikona svg { width: 19px; height: 19px; }
+.dol-kontakt a:hover .ikona { background: var(--f600); color: #fff; }
+.dol-kontakt b { display: block; color: #fff; font-size: .97rem; line-height: 1.3; overflow-wrap: anywhere; }
+.dol-kontakt small { display: block; font-size: .87rem; color: #A891C4; }
+
+.dol .dane-konto {
+  margin: .9rem 0 0; padding: .75rem .95rem; border-radius: 12px;
+  background: rgba(255, 255, 255, .06); color: #E6D9F3; font-size: .9rem;
+  letter-spacing: .02em; line-height: 1.45; overflow-wrap: anywhere;
+}
+.dol .dane-konto span {
+  display: block; font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: #A891C4; margin-bottom: .15rem;
+}
+.dol .dane-konto em { display: block; font-style: normal; font-size: .88rem; color: #C9B6DF; margin-bottom: .2rem; }
+
+.dol-pasek { border-top: 1px solid rgba(255, 255, 255, .12); padding-block: 1.1rem; font-size: .9rem; color: #A891C4; }
+.dol-pasek .szeroko { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; justify-content: space-between; align-items: center; }
+.dol-pasek > .szeroko > span a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.dol-linki { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-block: -.7rem; }
+/* bez tego paska paddingu linki w stopce mają 22 px wysokości: poniżej progu WCAG 2.5.8 */
+.dol-linki a { text-decoration: none; font-weight: 600; padding-block: .7rem; }
+.dol-linki a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Animacje wejścia ---------- */
+/* Klasa .js siedzi na <html> i dokłada ją skrypt w <head>. Bez niej sekcje nie chowają
+   się wcale: gdy JS nie wstanie (słaby zasięg, blokada), połowa strony zostawała pusta. */
 @media (prefers-reduced-motion: no-preference) {
-  .odslon { opacity: 0; transform: translateY(22px); transition: opacity .6s cubic-bezier(.16, 1, .3, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
-  .odslon.widoczne { opacity: 1; transform: none; }
-  .odslon:nth-child(2) { transition-delay: .08s; }
-  .odslon:nth-child(3) { transition-delay: .16s; }
-  .odslon:nth-child(4) { transition-delay: .24s; }
+  .js .odslon { opacity: 0; transform: translateY(22px); transition: opacity .6s cubic-bezier(.16, 1, .3, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
+  .js .odslon.widoczne { opacity: 1; transform: none; }
+  .js .odslon:nth-child(2) { transition-delay: .08s; }
+  .js .odslon:nth-child(3) { transition-delay: .16s; }
+  .js .odslon:nth-child(4) { transition-delay: .24s; }
   /* .odslon.widoczne { transform: none } zabijalo hover kart: oddajemy im podniesienie */
   :is(.karta, .swiadczenie).widoczne {
     transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
@@ -589,10 +782,16 @@ ul.lista-ok li::before {
 }
 
 /* ---------- Zawijanie: tablet ---------- */
+@media (max-width: 1120px) {
+  .karty { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width: 980px) {
-  .karty, .kryteria, .drogi { grid-template-columns: repeat(2, 1fr); }
+  .kryteria, .drogi { grid-template-columns: repeat(2, 1fr); }
   .partnerzy, .swiadczenia { grid-template-columns: repeat(2, 1fr); }
   .galeria { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 190px; }
+  /* nieparzysta liczba kafelków przy dwóch kolumnach: ostatnie zdjęcie bierze cały
+     rząd, zamiast zostawiać pustą połówkę pod spodem */
+  .galeria a:last-child { grid-column: 1 / -1; }
   .dol-siatka { grid-template-columns: 1fr 1fr; }
 }
 
@@ -609,25 +808,87 @@ ul.lista-ok li::before {
   .menu a:last-child { border-bottom: none; }
   .menu .przycisk { margin-top: .6rem; text-align: center; color: #fff; }
   .menu-guzik {
-    display: block; margin-left: auto; background: none; border: none; cursor: pointer;
-    padding: .5rem; color: var(--atrament);
+    display: grid; place-items: center; margin-left: auto; background: none; border: none;
+    cursor: pointer; width: 46px; height: 46px; flex: none; padding: 0; color: var(--atrament);
   }
+  /* menu dłuższe niż ekran w poziomie telefonu musi dać się przewinąć */
+  .menu { max-height: calc(100dvh - 72px); overflow-y: auto; }
   .menu-guzik svg { display: block; }
-  .gora .szeroko { position: relative; }
+  /* nazwa Klubu ma zostać w jednej linii obok godła i hamburgera: przy 390 px
+     zostaje na nią ok. 240 px, więc odrobinę mniejszy krój i węższe odstępy */
+  .gora .szeroko { position: relative; gap: .7rem; }
+  .marka { font-size: .95rem; }
+  /* dwie kolumny tekstu przy 900 px dają wiersze po 30 znaków: lepiej jedna kolumna */
+  .dwie-kolumny { grid-template-columns: 1fr; }
+  .dwie-kolumny.kolumny-karty { align-items: start; }
+  .katalog { grid-template-columns: 1fr; }
+}
+
+/* ---------- Hero: plakietka i znak przestają się mieścić obok siebie ----------
+   Kolumna zdjęcia ma poniżej 1000 px mniej niż 400 px szerokości, więc biała plakietka
+   wchodziła pod okrągły znak (przy 820 px na 94 px, przy 375 px na 81 px). Plakietka
+   bierze wtedy całą szerokość dołu zdjęcia, a znak przenosi się do górnego rogu. */
+@media (max-width: 1000px) {
+  .bohater-plakietka {
+    left: .7rem; right: .7rem; bottom: .7rem;
+    padding: .7rem .95rem; gap: .6rem; font-size: .9rem;
+  }
+  .bohater-plakietka b { font-size: 1.3rem; }
+  .bohater-znak { top: .7rem; right: .7rem; bottom: auto; width: 76px; height: 76px; padding: 6px; }
 }
 
 /* ---------- Zawijanie: telefon ---------- */
 @media (max-width: 760px) {
-  .bohater .szeroko, .strona-glowa .szeroko, .dwie-kolumny { grid-template-columns: 1fr; }
-  .bohater-foto > img { aspect-ratio: 4 / 3; border-radius: var(--luk); }
-  .bohater-plakietka { left: .8rem; bottom: .8rem; }
-  .strona-glowa figure { display: none; }
+  .bohater .szeroko, .strona-glowa .szeroko { grid-template-columns: 1fr; }
+  .bohater-foto > img:not(.bohater-znak) { aspect-ratio: 4 / 3; }
+  /* przyciski w nagłówkach: na telefonie równa szerokość zamiast poszarpanych pigułek */
+  .przyciski > .przycisk { flex: 1 1 100%; text-align: center; }
+  /* zdjęcie w nagłówku podstrony zostaje, tylko w niższym kadrze: schowane i tak
+     się pobierało, a nagłówek bez niego był ścianą tekstu */
+  .strona-glowa figure { margin-top: 1.4rem; }
+  .strona-glowa figure img { aspect-ratio: 16 / 9; }
+  .strona-glowa figure:is(.figura-logo, .figura-znak) { margin-top: .4rem; }
+  .strona-glowa figure.figura-znak img { width: min(62%, 200px); }
+  .strona-glowa figure.figura-logo img { width: min(60%, 190px); }
+  dialog.podglad .p-strzalka { width: 44px; height: 44px; margin-top: -22px; }
+  dialog.podglad .p-poprz { left: .4rem; }
+  dialog.podglad .p-nast { right: .4rem; }
   .fakty-kafle, .karty, .os, .kryteria, .nagrody, .partnerzy, .swiadczenia, .katalog, .drogi, .droga-glowna { grid-template-columns: 1fr; }
-  .dwie-kolumny.kolumny-karty { align-items: start; }
   .galeria { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
   .pola-2 { grid-template-columns: 1fr; gap: 0; }
   .pas > div { grid-template-columns: 1fr; }
+  /* pas dotyka krawędzi ekranu, więc zaokrąglone rogi wyglądałyby jak niedoróbka */
+  .pas { border-radius: 0; }
   .dol-siatka { grid-template-columns: 1fr; }
+
+  /* karty „Co robimy” poziomo: pionowo pięć zdjęć 4/3.2 robiło 1900 px ściany */
+  .karta { flex-direction: row; align-items: center; gap: .8rem; }
+  .karta img { flex: none; width: 34%; aspect-ratio: 1; }
+  .karta > div { padding: .2rem .5rem .2rem 0; }
+  .karta h3 { font-size: 1.08rem; margin-bottom: .25em; }
+  .karta p { font-size: .9rem; }
+
+  /* nagłówek nagrody był większy od h1 strony (36,8 px wobec 33,6 px) */
+  .nagroda b { font-size: 1.9rem; }
+  .nagroda { padding: 1.4rem 1.3rem 1.2rem; }
+  /* znaczek zostaje w pełnym stopniu (czytelność wygrywa z jedną linią), tylko ciaśniej */
+  .znaczek { padding: .4rem .85rem; }
+  /* numer konta ma spacje: niech łamie się na nich, a nie w środku grupy cyfr */
+  .konto b { font-size: 1.05rem; overflow-wrap: normal; }
+  .dol .o-klubie img { width: 64px; padding: 5px; }
+  .dol-kontakt small { font-size: .88rem; }
+  /* nagłówki w kartach schodziły poniżej rozmiaru tekstu podstawowego (17 px) */
+  :is(.droga, .swiadczenie) h3 { font-size: 1.12rem; }
+  /* zajawka: 19,2 px robiło 9 linii i spychało przycisk poza pierwszy ekran */
+  .zajawka { font-size: 1.1rem; }
+  .bohater .zajawka { margin-bottom: 1.3em; }
+}
+
+/* efekty pod kursorem zostają „przyklejone” po tapnięciu na telefonie */
+@media (hover: none) {
+  .galeria a:hover img { transform: none; }
+  :is(.karta, .swiadczenie, .karta.widoczne, .swiadczenie.widoczne):hover { transform: none; }
+  .przycisk:hover { transform: none; box-shadow: var(--cien-1); }
 }
 
 /* ---------- Druk (oferta sponsorska) ---------- */

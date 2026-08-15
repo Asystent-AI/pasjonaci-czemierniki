@@ -1,0 +1,64 @@
+# Jedno źródło zdjęć Klubu: galeria na stronie głównej i lista do podglądu
+# na wszystkich podstronach (skrypt czyta ją z <script id="zdjecia-klubu">).
+# plik = nazwa bez sufiksu, na dysku leżą warianty -m.webp (800 px) i -d.webp (1600 px).
+- plik: tecza
+  klasa: g-szer
+  w: 800
+  h: 601
+  alt: Tęcza nad ogrodem podczas lipcowego pleneru
+- plik: zadrzechnia
+  klasa: g-wys
+  w: 800
+  h: 1065
+  alt: Zadrzechnia fioletowa na kwiecie przetacznika, fiolet i zieleń jak w naszym logo
+- plik: palenisko
+  w: 800
+  h: 601
+  alt: Ogrodowe palenisko otoczone rabatami
+- plik: ogrod-zloty-2
+  w: 800
+  h: 601
+  alt: Rozmowy przy rabatach w złotym świetle
+- plik: aleja-formy
+  w: 800
+  h: 601
+  alt: Aleja strzyżonych drzew w przydomowym ogrodzie
+- plik: niebo-spacer
+  w: 800
+  h: 601
+  alt: Spacer po ogrodzie pod dramatycznym niebem
+- plik: hustawka
+  klasa: g-szer
+  w: 800
+  h: 601
+  alt: Ogród z huśtawką i rabatami traw
+- plik: koty
+  klasa: g-szer
+  w: 800
+  h: 601
+  alt: Dwa koty odpoczywają na kamieniach w odwiedzanym ogrodzie
+- plik: tecza-parasolki
+  w: 800
+  h: 601
+  alt: Klubowicze pod kolorowymi parasolkami, nad ogrodem tęcza
+- plik: grupa-zlota
+  w: 800
+  h: 601
+  alt: Uczestnicy pleneru w złotym świetle na tle burzowego nieba
+- plik: ogrod-panorama
+  klasa: g-szer
+  w: 800
+  h: 450
+  alt: Panorama odwiedzanego ogrodu, w głębi grupa uczestników pleneru
+- plik: ogrod-zloty
+  w: 800
+  h: 601
+  alt: Uczestnicy lipcowego pleneru Klubu w ogrodzie pełnym kwiatów, w złotym świetle wieczoru
+- plik: jezowki-ludzie
+  w: 800
+  h: 601
+  alt: Uczestnicy pleneru Klubu w ogrodzie, na pierwszym planie kwitnące jeżówki
+- plik: spacer-rabata
+  w: 800
+  h: 601
+  alt: Klubowicze oglądają rabatę traw i bylin
