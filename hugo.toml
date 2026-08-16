@@ -24,7 +24,7 @@ enableRobotsTXT = true
     weight = 10
   [[menus.main]]
     name = 'Wesprzyj nas'
-    pageRef = '/sponsorzy'
+    pageRef = '/wesprzyj'
     weight = 20
   [[menus.main]]
     name = 'Kontakt'
