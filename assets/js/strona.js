@@ -321,7 +321,7 @@
       bledy.push('zdjecia');
     }
 
-    // tylko oświadczenia obowiązkowe; zgoda na wizerunek jest dobrowolna
+    // oba oświadczenia są warunkiem ważnego zgłoszenia, tak jak podpis pod sekcją E karty
     var zgody = form.querySelectorAll('.zgody input[type="checkbox"][required]');
     var brakZgod = Array.prototype.some.call(zgody, function (z) { return !z.checked; });
     // bez zaznaczenia samej ramki niezaznaczone oświadczenie ginęło na długiej stronie
@@ -332,7 +332,7 @@
     if (brakZgod) {
       bledy.push('zgody');
       wynik.className = 'wynik-wyslania porazka';
-      wynik.textContent = 'Zaznacz wymagane oświadczenie, bez niego zgłoszenie jest nieważne.';
+      wynik.textContent = 'Zaznacz oba oświadczenia, bez nich zgłoszenie jest nieważne.';
     }
 
     if (bledy.length) {
@@ -360,6 +360,9 @@
       dane.append('wl_telefon', form.wl_telefon.value.trim());
       dane.append('zgoda_wlasciciela', form.zgoda_wlasciciela.files[0]);
     }
+    // oświadczenia muszą dojechać do maila: bez nich Koło nie ma czym wykazać zgody
+    dane.append('osw_karta', form.osw_karta.checked ? 'TAK' : 'NIE');
+    dane.append('osw_wykorzystanie', form.osw_wykorzystanie.checked ? 'TAK' : 'NIE');
     zdjecia.forEach(function (z) { dane.append('zdjecia', z.plik, z.nazwa); });
 
     wyslijGuzik.disabled = true;

@@ -533,20 +533,13 @@ ul.lista-ok li::before {
 }
 .zgody input { accent-color: var(--f700); width: 1.5rem; height: 1.5rem; margin-top: .1rem; flex: none; }
 .zgody label > span { flex: 1; }
-/* każda zgoda w ramce z etykietą: od razu widać, co obowiązkowe, a co nie */
+/* każde oświadczenie w osobnej ramce: na długim formularzu widać, czego brakuje */
 .zgody .zgoda {
   border: 1.5px solid var(--linia); border-radius: 14px; padding: .9rem 1.05rem;
   margin-bottom: .7rem; transition: border-color var(--przej), background var(--przej);
 }
 .zgody .zgoda:has(input:checked) { border-color: var(--f300); background: var(--f50); }
 .zgody .zgoda.ma-blad { border-color: #C4405A; background: #FDF0F3; }
-.zgody .zgoda-tag {
-  display: block; width: fit-content; margin-bottom: .4rem; padding: .16rem .6rem;
-  border-radius: 999px; font-size: .78rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .1em;
-}
-.zgody .zgoda-wymagana .zgoda-tag { background: var(--f100); color: var(--f800); }
-.zgody .zgoda-dobrowolna .zgoda-tag { background: var(--z100); color: var(--z800); }
 .zgody .zgoda small { display: block; margin-top: .45rem; font-size: .88rem; color: var(--tekst-2); }
 
 /* zdjęcia w formularzu */

@@ -44,6 +44,7 @@ POLA = [
     ("wl_adres_ogrodu", "Adres ogrodu (właściciel)"),
     ("wl_telefon", "Telefon właściciela"),
     ("opis", "Opis ogrodu"),
+    ("osw_karta", "Akceptacja Regulaminu i Klauzuli RODO, prawa autorskie do zdjęć"),
     ("osw_wykorzystanie", "Zgoda na publikację zdjęć, opisu i wizerunku"),
 ]
 
@@ -85,11 +86,15 @@ def zgloszenie():
         return jsonify(ok=False, blad="Za dużo zgłoszeń z tego adresu. Spróbuj za godzinę."), 429
 
     dane = {klucz: request.form.get(klucz, "").strip() for klucz, _ in POLA}
-    # zgoda na wizerunek jest dobrowolna, ale musi dać się wykazać (art. 7 ust. 1 RODO)
-    dane["osw_wykorzystanie"] = "TAK" if request.form.get("osw_wykorzystanie") else "NIE"
+    # oba oświadczenia odpowiadają sekcji E karty zgłoszeniowej i muszą dać się wykazać
+    # (art. 7 ust. 1 RODO); sprawdzamy je też tutaj, bo walidację w przeglądarce da się obejść
+    for klucz in ("osw_karta", "osw_wykorzystanie"):
+        dane[klucz] = "TAK" if request.form.get(klucz) in ("TAK", "on", "true", "1") else "NIE"
     braki = [k for k in WYMAGANE if not dane[k]]
     if braki:
         return jsonify(ok=False, blad="Brakuje wymaganych pól: " + ", ".join(braki)), 400
+    if dane["osw_karta"] != "TAK" or dane["osw_wykorzystanie"] != "TAK":
+        return jsonify(ok=False, blad="Zgłoszenie wymaga zaznaczenia obu oświadczeń."), 400
 
     zdjecia = request.files.getlist("zdjecia")
     zdjecia = [z for z in zdjecia if z.filename]
@@ -144,8 +149,8 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
         if dane[klucz]:
             linie.append(f"{etykieta}: {dane[klucz]}")
     linie += ["",
-              "Oświadczenie z karty zgłoszeniowej (regulamin, klauzula RODO, prawa autorskie "
-              "do zdjęć, brak powiązania z Komisją) zostało zaznaczone jako wymagane.",
+              "Oba oświadczenia z sekcji E karty zgłoszeniowej zostały zaznaczone: bez nich "
+              "formularz nie przyjmuje zgłoszenia.",
               f"Kopia zgłoszenia na serwerze: {folder}"]
     wiadomosc.set_content("\n".join(linie))
 
