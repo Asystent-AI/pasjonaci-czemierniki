@@ -75,8 +75,8 @@ w wolumenie `pasjonaci-zgloszenia`, dopiero potem idzie mailem.
 Wiadomości wychodzą jako `multipart/alternative`: wersja tekstowa plus HTML na tabelach
 (flexbox i grid w klientach pocztowych nie działają). Logo to **osadzony obraz** `logo-mail.png`
 z `cid:logo-klubu`, bo obrazy z sieci klienty blokują domyślnie. Plik generuje się z
-`static/odznaka.png` spłaszczonej na biel do 176 px i **musi być kopiowany w Dockerfile**
-razem z `app.py`.
+`input/Logotyp_Front_wysoka_jakość_bez_tła.png` przyciętej do zawartości, w 200 px, z alfą,
+i **musi być kopiowany w Dockerfile** razem z `app.py`.
 
 Cztery szablony: zgłoszenie konkursowe do Koła (z ramką o zgodzie na wizerunek),
 wiadomość kontaktowa do Koła, potwierdzenie zgłoszenia dla uczestnika, potwierdzenie zapisu
@@ -85,6 +85,22 @@ w osobnym `try`, żeby odbicie od jego skrzynki nie wpłynęło na maila do Koł
 
 Podgląd szablonów bez wysyłki: podmień `app.wyslij_smtp` na zbieranie do listy, wywołaj
 `wyslij_email` / `potwierdz_zgloszenie` i zapisz `get_body(preferencelist=('html',))` do pliku.
+Logo w mailu **musi mieć przezroczyste tło** (`Logotyp_Front_wysoka_jakość_bez_tła.png` z `input/`)
+i `disposition="inline"` przy `add_related`: z `filename=` biblioteka ustawia
+`Content-Disposition: attachment` i logo pokazuje się jako załącznik ze spinaczem.
+Nagłówek maila jest jasny, bo logotyp ma ciemny napis na obwodzie.
+
+**Nabór pilnuje serwer**, nie tylko baner: `TERMIN_ZGLOSZEN` (domyślnie `2026-08-16`, ostatni
+dzień z § 5 pkt 1 regulaminu) odcina `/api/zgloszenie` po tej dacie odpowiedzią 403. Kolejna
+edycja albo przedłużenie naboru: zmienna w `/opt/pasjonaci-formularz/smtp.env` i restart
+kontenera. Nieudana wysyłka maila zostawia plik `NIEWYSLANE` w katalogu zgłoszenia, a
+`/api/zdrowie` zlicza takie katalogi i pokazuje aktualny termin.
+
+Sprawdzenie backendu przed wdrożeniem (wymaga `flask` i `Pillow`, nie wchodzi do obrazu):
+
+```bash
+python formularz/test_app.py
+```
 
 Wdrożenie backendu (kontener stoi na `docker run`, nie na compose, więc labele Traefika
 trzeba podać ponownie przy odtwarzaniu):

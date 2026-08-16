@@ -27,7 +27,7 @@
   <div class="szeroko">
     <div class="dwie-kolumny">
 
-      <form class="formularz formularz-mini" data-sukces="Dziękujemy za wiadomość! Odezwiemy się najszybciej, jak się da, zwykle tego samego dnia." novalidate>
+      <form class="formularz formularz-mini" method="post" action="/api/kontakt" data-sukces="Dziękujemy za wiadomość! Odezwiemy się najszybciej, jak się da, zwykle tego samego dnia." novalidate>
         <h2>Napisz do nas</h2>
         <input type="hidden" name="temat" value="kontakt">
         <div class="pole">
@@ -37,7 +37,7 @@
         </div>
         <div class="pole">
           <label for="k-kontakt">Telefon albo e-mail</label>
-          <input type="text" id="k-kontakt" name="kontakt" autocomplete="tel" autocapitalize="none" spellcheck="false" required>
+          <input type="text" id="k-kontakt" name="kontakt" autocapitalize="none" spellcheck="false" required>
           <p class="blad-pola">Zostaw numer telefonu albo adres e-mail, inaczej nie zdołamy odpowiedzieć.</p>
         </div>
         <div class="pole">

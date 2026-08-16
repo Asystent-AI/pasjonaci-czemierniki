@@ -14,11 +14,13 @@ import os
 import re
 import json
 import logging
+import mimetypes
 import smtplib
 import time
 import unicodedata
 from datetime import datetime
 from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
 from html import escape
 from pathlib import Path
 
@@ -32,6 +34,11 @@ log = logging.getLogger("formularz")
 
 KATALOG = Path(os.environ.get("KATALOG_ZGLOSZEN", "/dane/zgloszenia"))
 MAIL_TO = os.environ.get("MAIL_TO", "kgw.czemierniki@gmail.com")
+# Ostatni dzień naboru z regulaminu (§ 5 pkt 1), włącznie. Po tej dacie formularz
+# odmawia przyjęcia zgłoszenia: baner na stronie nie zatrzyma kogoś, kto wrócił
+# do otwartej od wczoraj karty, a potwierdzenie z obietnicą wizytacji byłoby kłamstwem.
+# Zmiana terminu albo kolejna edycja: zmienna TERMIN_ZGLOSZEN w smtp.env.
+TERMIN_ZGLOSZEN = os.environ.get("TERMIN_ZGLOSZEN", "2026-08-16")
 
 # Logo w mailu: odznaka Klubu, dołączana jako obraz osadzony (cid), nie link.
 # Klienty pocztowe domyślnie blokują obrazy z sieci, osadzony pokazuje się od razu.
@@ -40,6 +47,10 @@ TELEFON_KLUBU = "795 716 644"
 FIOLET, FIOLET_CIEMNY, ZIELEN, ATRAMENT, SZARY = "#5A2495", "#36105A", "#3A7322", "#241533", "#6B6078"
 
 WYMAGANE = ["imie_nazwisko", "adres", "telefon", "opis"]
+RELACJE = {
+    "wlasciciel": "Własny ogród (właściciel lub użytkownik)",
+    "osoba_trzecia": "Zgłoszenie cudzego ogrodu za zgodą właściciela",
+}
 POLA = [
     ("imie_nazwisko", "Imię i nazwisko zgłaszającego"),
     ("adres", "Adres zamieszkania"),
@@ -95,7 +106,8 @@ def bezpieczna_nazwa(tekst: str, domyslna: str = "plik") -> str:
 @app.get("/api/zdrowie")
 def zdrowie():
     smtp = "skonfigurowany" if os.environ.get("SMTP_HOST") else "BRAK (zapis tylko na dysk)"
-    return jsonify(ok=True, smtp=smtp)
+    niewyslane = len(list(KATALOG.glob("*/NIEWYSLANE"))) if KATALOG.exists() else 0
+    return jsonify(ok=True, smtp=smtp, nabor_do=TERMIN_ZGLOSZEN, niewyslane=niewyslane)
 
 
 @app.post("/api/zgloszenie")
@@ -108,6 +120,12 @@ def zgloszenie():
     if za_duzo_zgloszen(ip):
         return jsonify(ok=False, blad="Za dużo zgłoszeń z tego adresu. Spróbuj za godzinę."), 429
 
+    if TERMIN_ZGLOSZEN and datetime.now().date().isoformat() > TERMIN_ZGLOSZEN:
+        dzien = datetime.strptime(TERMIN_ZGLOSZEN, "%Y-%m-%d")
+        return jsonify(ok=False, blad=(
+            f"Nabór zgłoszeń zamknęliśmy {dzien:%d.%m.%Y}. Wyniki ogłaszamy na scenie Dożynek. "
+            "Chcesz dopytać? Zadzwoń: 795 716 644.")), 403
+
     dane = {klucz: request.form.get(klucz, "").strip() for klucz, _ in POLA}
     # Dwa pierwsze oświadczenia są warunkiem udziału (akceptacja Regulaminu i licencja na
     # zdjęcia z § 8 ust. 2). Trzecie, zgoda na wizerunek, MUSI zostać dobrowolne: wymuszona
@@ -115,11 +133,20 @@ def zgloszenie():
     # wykazać (art. 7 ust. 1 RODO), a walidację w przeglądarce da się obejść.
     for klucz in ("osw_karta", "osw_wykorzystanie", "osw_wizerunek"):
         dane[klucz] = "TAK" if request.form.get(klucz) in ("TAK", "on", "true", "1") else "NIE"
+    # Napis dla ludzi składa serwer. Wcześniej przyjeżdżał gotowy z przeglądarki, a cała
+    # obsługa cudzego ogrodu wisiała na jego dosłownym brzmieniu.
+    cudzy = dane["relacja"] in ("osoba_trzecia", "Zgłoszenie cudzego ogrodu za zgodą właściciela")
+    dane["relacja"] = (RELACJE["osoba_trzecia"] if cudzy else RELACJE["wlasciciel"])
     braki = [k for k in WYMAGANE if not dane[k]]
     if braki:
         return jsonify(ok=False, blad="Brakuje wymaganych pól: " + ", ".join(braki)), 400
     if dane["osw_karta"] != "TAK" or dane["osw_wykorzystanie"] != "TAK":
         return jsonify(ok=False, blad="Zgłoszenie wymaga zaznaczenia obu oświadczeń."), 400
+
+    if cudzy:
+        braki_wl = [k for k in ("wl_imie_nazwisko", "wl_adres_ogrodu", "wl_telefon") if not dane[k]]
+        if braki_wl:
+            return jsonify(ok=False, blad="Przy cudzym ogrodzie podaj dane właściciela."), 400
 
     zdjecia = request.files.getlist("zdjecia")
     zdjecia = [z for z in zdjecia if z.filename]
@@ -155,6 +182,8 @@ def zgloszenie():
         wyslij_email(dane, folder, kiedy, zdjecia=len(zapisane), zgoda_pliku=bool(zgoda))
     except Exception:
         log.exception("Wysyłka e-maila nie powiodła się, zgłoszenie zostało na dysku: %s", folder)
+        (folder / "NIEWYSLANE").write_text(
+            "E-mail do Koła nie wyszedł. Zgłoszenie jest w tym katalogu.\n", encoding="utf-8")
 
     # 3. Potwierdzenie dla zgłaszającego. Osobna próba: jego skrzynka może odrzucić
     # wiadomość, a to nie może wpłynąć na maila do Koła ani na odpowiedź formularza.
@@ -238,6 +267,8 @@ def zloz_wiadomosc(temat: str, tekst: str, tresc_html: str, do: str = MAIL_TO,
     """Wersja tekstowa i HTML w jednej wiadomości, logo osadzone przy HTML-u."""
     wiadomosc = EmailMessage()
     wiadomosc["Subject"] = " ".join(temat.split())
+    wiadomosc["Date"] = formatdate(localtime=True)
+    wiadomosc["Message-ID"] = make_msgid(domain="pasjonaci.czemierniki.org")
     wiadomosc["To"] = bezpieczny_adres(do) or MAIL_TO
     odpowiedz_do = bezpieczny_adres(odpowiedz_do)
     if odpowiedz_do:
@@ -245,19 +276,23 @@ def zloz_wiadomosc(temat: str, tekst: str, tresc_html: str, do: str = MAIL_TO,
     wiadomosc.set_content(tekst)
     wiadomosc.add_alternative(tresc_html, subtype="html")
     if LOGO.exists():
+        # bez filename: z nim email.contentmanager ustawia Content-Disposition: attachment
+        # i logo pokazuje się w kliencie jako załącznik ze spinaczem
         wiadomosc.get_payload()[1].add_related(
-            LOGO.read_bytes(), "image", "png", cid="<logo-klubu>", filename="logo-klubu.png")
+            LOGO.read_bytes(), "image", "png", cid="<logo-klubu>", disposition="inline")
     return wiadomosc
 
 
 def telefon_html(numer: str) -> str:
     czysty = re.sub(r"[^0-9+]", "", numer)
+    if not czysty.startswith("+"):
+        czysty = "+48" + czysty
     return f'<a href="tel:{czysty}" style="color:{FIOLET};text-decoration:none;">{escape(numer)}</a>'
 
 
 def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
                  zgoda_pliku: bool = False) -> None:
-    cudzy = dane["relacja"].startswith("Zgłoszenie cudzego")
+    cudzy = dane["relacja"] == RELACJE["osoba_trzecia"]
     linie = [
         "Nowe zgłoszenie do konkursu Najpiękniejszy Ogród Gminy Czemierniki 2026.",
         f"Wysłane przez formularz na stronie {kiedy:%d.%m.%Y o %H:%M}.",
@@ -267,6 +302,9 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
         if dane[klucz]:
             linie.append(f"{etykieta}: {dane[klucz]}")
     linie += ["", f"Zdjęcia ogrodu w załączniku: {zdjecia}."]
+    if cudzy:
+        linie.append("Zgoda właściciela ogrodu: w załączniku." if zgoda_pliku
+                     else "UWAGA: BRAK PLIKU ze zgodą właściciela ogrodu.")
     if dane["osw_wizerunek"] == "TAK":
         linie.append("Zgoda na wizerunek i na podanie imienia i nazwiska przy wynikach: JEST.")
     else:
@@ -297,7 +335,7 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
     srodek += (f'<div style="font-size:12px;font-weight:700;letter-spacing:.08em;'
                f'text-transform:uppercase;color:{ZIELEN};padding:6px 0 6px;">Opis ogrodu</div>'
                f'<div style="background:#F6FAEE;border-radius:10px;padding:14px 16px;margin-bottom:18px;'
-               f'font-size:14px;line-height:1.6;white-space:pre-wrap;">{escape(dane["opis"])}</div>')
+               f'font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:break-word;">{escape(dane["opis"])}</div>')
     if dane["osw_wizerunek"] == "TAK":
         srodek += ramka(
             f"<b style='color:{ZIELEN}'>Zgoda na wizerunek: JEST.</b><br>"
@@ -315,7 +353,7 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
               f"zgłoszenia.<br>Kopia zgłoszenia wraz ze zdjęciami: <code>{escape(str(folder))}</code>")
 
     wiadomosc = zloz_wiadomosc(
-        f"Konkurs ogrodowy: zgłoszenie od {dane['imie_nazwisko']}",
+        f"Zgłoszenie do konkursu ogrodowego: {dane['imie_nazwisko'][:60]}",
         "\n".join(linie),
         szkielet("Nowe zgłoszenie do konkursu",
                  f"Najpiękniejszy Ogród Gminy Czemierniki 2026 &middot; {kiedy:%d.%m.%Y, godz. %H:%M}",
@@ -326,12 +364,9 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
         if plik.suffix == ".json":
             continue
         surowe = plik.read_bytes()
-        if plik.suffix.lower() == ".pdf":
-            typ = ("application", "pdf")
-        elif plik.suffix.lower() == ".png":
-            typ = ("image", "png")
-        else:
-            typ = ("image", "jpeg")
+        # zgoda właściciela bywa HEIC-iem z telefonu albo skanem PDF: zgadywanie
+        # "wszystko poza pdf i png to jpeg" psuło takie załączniki
+        typ = (mimetypes.guess_type(plik.name)[0] or "application/octet-stream").split("/")
         wiadomosc.add_attachment(surowe, maintype=typ[0], subtype=typ[1], filename=plik.name)
 
     wyslij_smtp(wiadomosc)
@@ -345,7 +380,7 @@ def potwierdz_zgloszenie(dane: dict, kiedy: datetime, zdjecia: int = 0) -> None:
     adres = bezpieczny_adres(dane["email"])
     if not adres:
         return
-    cudzy = dane["relacja"].startswith("Zgłoszenie cudzego")
+    cudzy = dane["relacja"] == RELACJE["osoba_trzecia"]
     adres_ogrodu = dane["adres_ogrodu"] or (dane["wl_adres_ogrodu"] if cudzy else "") or dane["adres"]
     imie = dane["imie_nazwisko"].split()[0] if dane["imie_nazwisko"] else ""
     linie = [
@@ -359,8 +394,8 @@ def potwierdz_zgloszenie(dane: dict, kiedy: datetime, zdjecia: int = 0) -> None:
         "- opis ogrodu i rozwiązań przyjaznych naturze",
         "",
         "Co dalej:",
-        "1. Komisja Konkursowa sprawdza zgłoszenie i wybiera ogrody do wizytacji.",
-        "2. Zadzwonimy, żeby uzgodnić termin wizyty w dniach 18-21 sierpnia 2026.",
+        "1. Komisja Konkursowa ocenia zgłoszenia i wybiera ogrody finałowe.",
+        "2. Do finalistów dzwonimy, żeby uzgodnić termin wizyty w dniach 18–21 sierpnia 2026.",
         "3. Wyniki ogłaszamy 22 sierpnia na scenie Dożynek Gminno-Parafialnych w Czemiernikach.",
     ]
     if dane["osw_wizerunek"] != "TAK":
@@ -375,8 +410,8 @@ def potwierdz_zgloszenie(dane: dict, kiedy: datetime, zdjecia: int = 0) -> None:
         f'text-align:center;line-height:26px;">{n}</div></td>'
         f'<td style="padding:0 0 12px;font-size:15px;line-height:1.5;vertical-align:top;">{t}</td></tr>'
         for n, t in enumerate([
-            "Komisja Konkursowa sprawdza zgłoszenie i wybiera ogrody do wizytacji.",
-            "Dzwonimy, żeby uzgodnić termin wizyty. Wizytacje trwają <b>18–21 sierpnia</b>.",
+            "Komisja Konkursowa ocenia zgłoszenia i wybiera ogrody finałowe.",
+            "Do finalistów dzwonimy, żeby uzgodnić termin wizyty. Wizytacje trwają <b>18–21 sierpnia</b>.",
             "Wyniki ogłaszamy <b>22 sierpnia</b> na scenie Dożynek Gminno-Parafialnych.",
         ], start=1))
     srodek = (f'<p style="margin:0 0 18px;font-size:16px;">{escape(imie)}, dziękujemy! '
@@ -423,6 +458,9 @@ def kontakt():
     temat = request.form.get("temat", "kontakt").strip()
     if not imie or not dane_kontaktowe:
         return jsonify(ok=False, blad="Podaj imię oraz telefon albo e-mail."), 400
+    cyfry = sum(z.isdigit() for z in dane_kontaktowe)
+    if not bezpieczny_adres(dane_kontaktowe) and cyfry < 9:
+        return jsonify(ok=False, blad="Podaj numer telefonu albo adres e-mail, żebyśmy mogli odpowiedzieć."), 400
 
     kiedy = datetime.now()
     folder = KATALOG.parent / "wiadomosci"
@@ -468,21 +506,24 @@ def kontakt():
         srodek += (f'<div style="font-size:12px;font-weight:700;letter-spacing:.08em;'
                    f'text-transform:uppercase;color:{ZIELEN};padding:6px 0 6px;">Wiadomość</div>'
                    f'<div style="background:#F6FAEE;border-radius:10px;padding:14px 16px;'
-                   f'font-size:14px;line-height:1.6;white-space:pre-wrap;">{escape(wiadomosc)}</div>')
+                   f'font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:break-word;">{escape(wiadomosc)}</div>')
     else:
         srodek += ramka("Bez treści, sama prośba o kontakt.", FIOLET, "#F7F2FC")
     stopka = ("Odpowiedz na tę wiadomość albo zadzwoń, korzystając z kontaktu powyżej. "
               "Kopia leży na serwerze w katalogu wiadomości.")
+    poszlo = True
     try:
         wyslij_smtp(zloz_wiadomosc(
             tytul, tresc,
             szkielet(naglowek, wprowadzenie, srodek, stopka),
             odpowiedz_do=adres_zwrotny))
     except Exception:
+        poszlo = False
         log.exception("Wysyłka wiadomości kontaktowej nie powiodła się, kopia na dysku")
 
-    # potwierdzenie dla piszącego, gdy zostawił adres e-mail
-    if mailem and temat == "dolacz":
+    # Potwierdzenie dla piszącego tylko wtedy, gdy wiadomość faktycznie doszła do Koła.
+    # Inaczej człowiek dostaje „odezwiemy się", a w Kole nikt o nim nie wie.
+    if poszlo and mailem and temat == "dolacz":
         try:
             potwierdz_zapis(imie, adres_zwrotny)
         except Exception:
@@ -511,9 +552,9 @@ def potwierdz_zapis(imie: str, adres: str) -> None:
     stopka = (f"Masz pytania? Zadzwoń pod {telefon_html(TELEFON_KLUBU)} albo odpisz na tę wiadomość.<br>"
               "Terminy spotkań ogłaszamy też na profilu KGW Czemierniki na Facebooku.")
     wyslij_smtp(zloz_wiadomosc(
-        "Zapisaliśmy Cię na najbliższe spotkanie Klubu",
+        "Mamy Twoje zgłoszenie do Klubu Pasjonatów Ogrodnictwa",
         tekst,
-        szkielet("Witamy w Klubie", "Klub Pasjonatów Ogrodnictwa Czemierniki", srodek, stopka),
+        szkielet("Dziękujemy za zgłoszenie", "Klub Pasjonatów Ogrodnictwa Czemierniki", srodek, stopka),
         do=adres, odpowiedz_do=MAIL_TO))
 
 

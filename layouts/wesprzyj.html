@@ -60,7 +60,7 @@
         <span class="bank">Bank Spółdzielczy w Czemiernikach</span>
         <b>15 8046 1025 2002 0350 4444 0001</b>
         <p>Koło Gospodyń Wiejskich Czemierniki<br>
-        tytuł przelewu: darowizna na cele statutowe — Klub Pasjonatów Ogrodnictwa</p>
+        tytuł przelewu: darowizna na cele statutowe: Klub Pasjonatów Ogrodnictwa</p>
       </div>
     </div>
     <div class="drogi drogi-3">
@@ -84,7 +84,7 @@
         <ul class="lista-ok">
           <li>właścicielka zasiada w komisji konkursowej,</li>
           <li>nazwa szkółki pojawia się w każdej publikacji o konkursie,</li>
-          <li>u niej realizowana jest <strong>cała pula 2.000 zł</strong>, także tysiąc złotych od Burmistrza, więc do szkółki trafią laureaci konkursu z konkretnymi funduszami do wydania,</li>
+          <li>u niej realizowana jest <strong>cała pula 2.000 zł</strong>, razem z 1.000 zł od Burmistrza, więc laureaci przyjdą do szkółki z voucherami do wydania na miejscu,</li>
           <li>wręczenie nagród odbędzie się na głównej scenie Dożynek, przy pełnej widowni.</li>
         </ul>
       </div>
@@ -224,17 +224,17 @@
     </div>
 
     <div class="dwie-kolumny">
-      <form class="formularz formularz-mini" data-sukces="Dziękujemy! Odezwiemy się do Ciebie najszybciej, jak się da, zwykle tego samego dnia." novalidate>
+      <form class="formularz formularz-mini" method="post" action="/api/kontakt" data-sukces="Dziękujemy! Odezwiemy się do Ciebie najszybciej, jak się da, zwykle tego samego dnia." novalidate>
         <h3>Napisz do nas</h3>
         <input type="hidden" name="temat" value="sponsor">
         <div class="pole">
           <label for="s-imie">Firma albo imię i nazwisko</label>
-          <input type="text" id="s-imie" name="imie" autocomplete="organization" required>
+          <input type="text" id="s-imie" name="imie" required>
           <p class="blad-pola">Podaj nazwę firmy albo swoje imię i nazwisko.</p>
         </div>
         <div class="pole">
           <label for="s-kontakt">Telefon albo e-mail</label>
-          <input type="text" id="s-kontakt" name="kontakt" autocomplete="tel" autocapitalize="none" spellcheck="false" required>
+          <input type="text" id="s-kontakt" name="kontakt" autocapitalize="none" spellcheck="false" required>
           <p class="blad-pola">Zostaw numer telefonu albo adres e-mail, inaczej nie zdołamy odpowiedzieć.</p>
         </div>
         <div class="pole">

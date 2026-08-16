@@ -2,6 +2,14 @@
 (function () {
   'use strict';
 
+  function ogloszenie(element, tekst) {
+    // Region z role="status" jest ukryty (display:none) do czasu odpowiedzi, a tekst
+    // wpisany w tym samym takcie co odsłonięcie nie zostaje ogłoszony przez czytnik.
+    // setTimeout, nie requestAnimationFrame: w karcie schowanej w tle rAF nie odpala,
+    // więc komunikat o błędzie wisiałby niewidoczny do czasu powrotu na kartę.
+    setTimeout(function () { element.textContent = tekst; }, 30);
+  }
+
   /* ---------- Statystyki: zdarzenia ---------- */
   function slad(nazwa, dane) {
     if (window.umami && typeof window.umami.track === 'function') window.umami.track(nazwa, dane);
@@ -146,6 +154,17 @@
     }, { passive: true });
   }
 
+  /* Komunikaty błędów pod polami wiążemy z polami przez aria-describedby: sama
+     czerwona ramka nie mówi czytnikowi ekranu, co jest nie tak. */
+  document.querySelectorAll('.pole > .blad-pola').forEach(function (komunikat, i) {
+    var pole = komunikat.parentElement.querySelector('input, textarea, select');
+    if (!pole) return;
+    if (!komunikat.id) komunikat.id = (pole.id || 'pole-' + i) + '-blad';
+    var opisy = (pole.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+    if (opisy.indexOf(komunikat.id) === -1) opisy.push(komunikat.id);
+    pole.setAttribute('aria-describedby', opisy.join(' '));
+  });
+
   /* ---------- Formularze kontaktowe (Kontakt, Dołącz) ---------- */
   document.querySelectorAll('form.formularz-mini').forEach(function (fm) {
     fm.addEventListener('submit', function (e) {
@@ -157,6 +176,8 @@
         var puste = !p.value.trim();
         var pole = p.closest('.pole');
         if (pole) pole.classList.toggle('ma-blad', puste);
+        if (puste) p.setAttribute('aria-invalid', 'true');
+        else p.removeAttribute('aria-invalid');
         if (puste) poprawny = false;
       });
       if (!poprawny) {
@@ -177,14 +198,14 @@
         .then(function (odp) {
           if (!odp.ok) { var e2 = new Error(''); e2.wlasny = odp.blad; throw e2; }
           wynikMini.className = 'wynik-wyslania sukces';
-          wynikMini.textContent = fm.getAttribute('data-sukces');
+          ogloszenie(wynikMini, fm.getAttribute('data-sukces'));
           slad('wiadomosc', { temat: String(new FormData(fm).get('temat') || 'ogolny') });
           fm.reset();
         })
         .catch(function (err) {
           wynikMini.className = 'wynik-wyslania porazka';
-          wynikMini.textContent = (err && err.wlasny) ||
-            'Nie udało się wysłać wiadomości. Zadzwoń: 795 716 644 albo napisz na kgw.czemierniki@gmail.com.';
+          ogloszenie(wynikMini, (err && err.wlasny) ||
+            'Nie udało się wysłać wiadomości. Zadzwoń: 795 716 644 albo napisz na kgw.czemierniki@gmail.com.');
         })
         .finally(function () {
           guzik.disabled = false; guzik.textContent = napis;
@@ -211,12 +232,19 @@
   var pasekWypelnienie = pasek.querySelector('div');
   var wyslijGuzik = form.querySelector('.wyslij');
 
-  /* Sekcja B pokazywana przy zgłoszeniu cudzego ogrodu */
+  /* Sekcja B pokazywana przy zgłoszeniu cudzego ogrodu. Ustawiamy ją też od razu:
+     po miękkim odświeżeniu przeglądarka przywraca zaznaczony przycisk, ale zdarzenia
+     „change" nie wywołuje, więc sekcja zostawała ukryta razem z wymaganym polem pliku. */
+  function przelaczSekcjeB() {
+    var cudzy = form.relacja.value === 'osoba_trzecia';
+    sekcjaB.classList.toggle('widoczna', cudzy);
+    var poleAdresu = document.getElementById('adres-ogrodu');
+    if (poleAdresu) poleAdresu.closest('.pole').hidden = cudzy;
+  }
   form.querySelectorAll('input[name="relacja"]').forEach(function (r) {
-    r.addEventListener('change', function () {
-      sekcjaB.classList.toggle('widoczna', form.relacja.value === 'osoba_trzecia');
-    });
+    r.addEventListener('change', przelaczSekcjeB);
   });
+  przelaczSekcjeB();
 
   /* Wrzutnia zdjęć */
   wrzutnia.addEventListener('click', function () { wejscie.click(); });
@@ -242,7 +270,9 @@
     obrazki.slice(0, wolne).forEach(function (plik) {
       zmniejsz(plik).then(function (blob) {
         var url = URL.createObjectURL(blob);
-        zdjecia.push({ plik: blob, nazwa: plik.name.replace(/\.\w+$/, '') + '.jpg', url: url });
+        var przekodowane = blob !== plik;
+        var nazwa = przekodowane ? plik.name.replace(/\.\w+$/, '') + '.jpg' : plik.name;
+        zdjecia.push({ plik: blob, nazwa: nazwa, url: url });
         rysujMiniatury();
       });
     });
@@ -285,13 +315,18 @@
       ? 'Dodano ' + n + ' z wymaganych 4–7 zdjęć.'
       : 'Dodano ' + n + ' ' + slowo + '. W porządku!' + (n < MAX_ZDJEC ? ' Możesz dodać jeszcze ' + (MAX_ZDJEC - n) + '.' : ''))
       + (pominiete ? ' Limit to ' + MAX_ZDJEC + ' zdjęć, więc ' + pominiete + ' z wybranych nie weszło.' : '');
-    licznik.className = 'licznik-zdjec ' + (n >= MIN_ZDJEC && !pominiete ? 'ok' : 'za-malo');
+    licznik.className = 'licznik-zdjec ' + (n >= MIN_ZDJEC ? 'ok' : 'za-malo');
   }
 
   /* Walidacja i wysyłka */
   function zaznaczBlad(id, jest) {
     var pole = document.getElementById(id);
-    if (pole) pole.closest('.pole').classList.toggle('ma-blad', jest);
+    if (pole) {
+      pole.closest('.pole').classList.toggle('ma-blad', jest);
+      // sama czerwona ramka nie istnieje dla czytnika ekranu
+      if (jest) pole.setAttribute('aria-invalid', 'true');
+      else pole.removeAttribute('aria-invalid');
+    }
     return jest;
   }
 
@@ -332,7 +367,7 @@
     if (brakZgod) {
       bledy.push('zgody');
       wynik.className = 'wynik-wyslania porazka';
-      wynik.textContent = 'Zaznacz oba oświadczenia, bez nich zgłoszenie jest nieważne.';
+      ogloszenie(wynik, 'Zaznacz oba oświadczenia, bez nich zgłoszenie jest nieważne.');
     }
 
     if (bledy.length) {
@@ -344,7 +379,7 @@
       }
       if (!brakZgod) {
         wynik.className = 'wynik-wyslania porazka';
-        wynik.textContent = 'Uzupełnij zaznaczone pola i spróbuj ponownie.';
+        ogloszenie(wynik, 'Uzupełnij zaznaczone pola i spróbuj ponownie.');
       }
       return;
     }
@@ -353,7 +388,7 @@
     ['imie_nazwisko', 'adres', 'telefon', 'email', 'adres_ogrodu', 'opis', 'strona_www'].forEach(function (n) {
       dane.append(n, form[n].value.trim());
     });
-    dane.append('relacja', cudzy ? 'Zgłoszenie cudzego ogrodu za zgodą właściciela' : 'Własny ogród (właściciel lub użytkownik)');
+    dane.append('relacja', cudzy ? 'osoba_trzecia' : 'wlasciciel');
     if (cudzy) {
       dane.append('wl_imie_nazwisko', form.wl_imie_nazwisko.value.trim());
       dane.append('wl_adres_ogrodu', form.wl_adres_ogrodu.value.trim());
@@ -393,7 +428,7 @@
       if (ok) {
         slad('zgloszenie-konkursowe');
         wynik.className = 'wynik-wyslania sukces';
-        wynik.textContent = 'Dziękujemy! Zgłoszenie dotarło do organizatorów. Komisja skontaktuje się telefonicznie, aby umówić wizytę w ogrodzie. Jeśli podano adres e-mail, potwierdzenie jest już w skrzynce.';
+        ogloszenie(wynik, 'Dziękujemy! Zgłoszenie dotarło do organizatorów. Komisja oceni je i wybierze ogrody finałowe, a do finalistów zadzwonimy, żeby umówić wizytę. Jeśli podano adres e-mail, potwierdzenie jest już w skrzynce.');
         form.reset();
         zdjecia.forEach(function (z) { URL.revokeObjectURL(z.url); });
         zdjecia = [];
@@ -402,7 +437,7 @@
         wynik.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
         wynik.className = 'wynik-wyslania porazka';
-        wynik.textContent = blad || 'Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo wyślij kartę e-mailem na kgw.czemierniki@gmail.com, ewentualnie zadzwoń: 795 716 644.';
+        ogloszenie(wynik, blad || 'Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo wyślij kartę e-mailem na kgw.czemierniki@gmail.com, ewentualnie zadzwoń: 795 716 644.');
         wynik.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }

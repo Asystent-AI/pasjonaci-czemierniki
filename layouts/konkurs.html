@@ -41,7 +41,7 @@
       <article class="odslon">
         <span class="dzien">wtorek–piątek</span>
         <span class="data">18–21 sierpnia 2026</span>
-        <p>Komisja Konkursowa odwiedza zgłoszone ogrody. Termin wizyty uzgadniamy telefonicznie.</p>
+        <p>Komisja Konkursowa odwiedza ogrody wybrane do finału. Termin wizyty uzgadniamy telefonicznie.</p>
       </article>
       <article class="odslon">
         <span class="dzien">sobota, Dożynki</span>
@@ -60,8 +60,8 @@
         <ul class="lista-ok">
           <li>Właściciele, współwłaściciele i użytkownicy przydomowych ogrodów z terenu Gminy Czemierniki.</li>
           <li>Nie trzeba należeć do KGW ani do Klubu. Każda posesja może być zgłoszona tylko raz.</li>
-          <li>Można zgłosić także cudzy ogród, na przykład sąsiada albo rodziców. Potrzebna jest wtedy pisemna zgoda właściciela (sekcja B karty zgłoszeniowej).</li>
-          <li>W konkursie nie mogą brać udziału członkowie Komisji Konkursowej ani ich najbliżsi.</li>
+          <li>Można zgłosić także cudzy ogród, na przykład sąsiada albo rodziców. Zgłaszający musi być mieszkańcem Gminy Czemierniki, a do zgłoszenia potrzebna jest pisemna zgoda właściciela (sekcja B karty zgłoszeniowej).</li>
+          <li>W konkursie nie mogą brać udziału członkowie Komisji Konkursowej, ich najbliższa rodzina ani osoby prowadzące z nimi wspólne gospodarstwo domowe.</li>
         </ul>
       </div>
       <div>
@@ -129,7 +129,7 @@
       zdjęcia dodasz prosto z telefonu. Masz pytania? Zadzwoń: <a href="tel:+48795716644">795 716 644</a>.</p>
     </div>
 
-    <form class="formularz" id="formularz-konkursu" novalidate>
+    <form class="formularz" id="formularz-konkursu" method="post" action="/api/zgloszenie" novalidate>
 
       <fieldset>
         <legend>Dane zgłaszającego</legend>
@@ -219,7 +219,7 @@
         </div>
         <input type="file" id="zdjecia" accept="image/*" multiple hidden>
         <div class="miniatury" id="miniatury"></div>
-        <p class="licznik-zdjec" id="licznik-zdjec">Dodano 0 z wymaganych 4–7 zdjęć.</p>
+        <p class="licznik-zdjec" id="licznik-zdjec" aria-live="polite">Dodano 0 z wymaganych 4–7 zdjęć.</p>
       </fieldset>
 
       <fieldset class="zgody">
@@ -228,9 +228,10 @@
         zgłoszeniowej (sekcja E). Zaznacz oba, a wysłanie formularza zastąpi Twój podpis.</p>
         <label class="zgoda"><input type="checkbox" name="osw_karta" required>
           <span>Oświadczam, że zapoznałem/am się z <a href="/dokumenty/regulamin-2026.pdf" target="_blank" rel="noopener">Regulaminem Konkursu</a>
-          oraz Klauzulą Informacyjną RODO i akceptuję ich postanowienia. Posiadam prawa autorskie
-          do załączonych zdjęć i nie jestem członkiem Komisji Konkursowej ani osobą pozostającą
-          z członkiem Komisji we wspólnym gospodarstwie domowym.</span></label>
+          oraz Klauzulą Informacyjną RODO i akceptuję ich postanowienia. Zgadzam się na przetwarzanie
+          moich danych osobowych w celu przeprowadzenia i rozstrzygnięcia Konkursu. Posiadam prawa
+          autorskie do załączonych zdjęć i nie jestem członkiem Komisji Konkursowej ani osobą
+          pozostającą z członkiem Komisji we wspólnym gospodarstwie domowym.</span></label>
         <label class="zgoda"><input type="checkbox" name="osw_wykorzystanie" required>
           <span>Zgadzam się, żeby Koło Gospodyń Wiejskich Czemierniki nieodpłatnie wykorzystało
           nadesłane zdjęcia ogrodu i jego opis w relacjach z Konkursu i w materiałach promocyjnych:

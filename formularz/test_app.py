@@ -89,6 +89,31 @@ def sprawdz():
                                              "strona_www": "spam"}).get_json()["ok"] is True
     assert not WYSLANE, "pułapka na boty nie wysyła maila"
 
+    czysto()
+    assert klient.post("/api/kontakt", data={"imie": "Ktoś", "kontakt": "nie wiem"}).status_code == 400, \
+        "kontakt musi wyglądać na telefon albo adres"
+
+    czysto()
+    assert zglos(relacja="osoba_trzecia").status_code == 400, "cudzy ogród wymaga danych właściciela"
+    odp = zglos(relacja="osoba_trzecia", wl_imie_nazwisko="Teresa Kozdra",
+                wl_adres_ogrodu="Stoczek 4", wl_telefon="600 100 200")
+    assert odp.status_code == 200
+    tresc = WYSLANE[0].get_body(preferencelist=("plain",)).get_content()
+    assert app.RELACJE["osoba_trzecia"] in tresc, "opis relacji składa serwer, nie przeglądarka"
+    assert "BRAK PLIKU ze zgodą właściciela" in tresc, "brak skanu zgody musi być widoczny w mailu"
+
+    czysto()
+    poprzedni, app.TERMIN_ZGLOSZEN = app.TERMIN_ZGLOSZEN, "2000-01-01"
+    assert zglos().status_code == 403, "po terminie naboru formularz nie przyjmuje zgłoszeń"
+    app.TERMIN_ZGLOSZEN = poprzedni
+
+    czysto()
+    zglos()
+    obrazy = [c for c in WYSLANE[0].walk() if c.get_content_type() == "image/png"]
+    assert obrazy and obrazy[0].get("Content-Disposition") == "inline", \
+        "logo ma być osadzone, nie doczepione jako plik"
+    assert "Date" in WYSLANE[0] and "Message-ID" in WYSLANE[0], "nagłówki wymagane przez filtry poczty"
+
     print("Wszystkie sprawdzenia przeszły.")
 
 

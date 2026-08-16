@@ -29,8 +29,8 @@
 
 <section class="sekcja" id="zapisz-sie">
   <div class="szeroko waskie">
-    <form class="formularz formularz-mini"
-      data-sukces="Dziękujemy! Odezwiemy się i zaprosimy Cię na najbliższe spotkanie." novalidate>
+    <form class="formularz formularz-mini" method="post" action="/api/kontakt"
+      data-sukces="Dziękujemy! Odezwiemy się i zaprosimy Cię na najbliższe spotkanie. Jeśli zostawiłeś adres e-mail, potwierdzenie jest już w Twojej skrzynce." novalidate>
       <h2>Zapisz się do Klubu</h2>
       <p class="legenda-opis">Wystarczy imię i kontakt do Ciebie. Resztą zajmiemy się my:
       zadzwonimy albo napiszemy, powiemy, kiedy i gdzie widzimy się najbliżej, i odpowiemy
@@ -44,7 +44,7 @@
         </div>
         <div class="pole">
           <label for="d-kontakt">Telefon albo e-mail</label>
-          <input type="text" id="d-kontakt" name="kontakt" autocomplete="tel" autocapitalize="none" spellcheck="false" required>
+          <input type="text" id="d-kontakt" name="kontakt" autocapitalize="none" spellcheck="false" required>
           <p class="blad-pola">Zostaw numer telefonu albo adres e-mail.</p>
         </div>
       </div>
@@ -63,6 +63,9 @@
         <input type="text" id="d-www" name="strona_www" tabindex="-1" autocomplete="off">
       </p>
       <button type="submit" class="przycisk wyslij">Wyślij zgłoszenie</button>
+      <p style="font-size:.85rem;color:var(--tekst-2);margin:.9rem 0 0">Dane trafiają do Koła
+      Gospodyń Wiejskich Czemierniki i służą wyłącznie do kontaktu w sprawie spotkań Klubu.
+      Możesz poprosić o ich usunięcie w każdej chwili.</p>
       <div class="wynik-wyslania" role="status"></div>
     </form>
   </div>

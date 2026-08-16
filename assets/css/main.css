@@ -166,8 +166,6 @@ a:hover > .godlo { transform: rotate(-8deg); }
   background: var(--f50); color: var(--f900); border-color: var(--f300);
   box-shadow: 0 10px 22px -12px rgba(var(--poswiata), .45);
 }
-.przycisk-ziel { --poswiata: 58, 115, 34; background: var(--z700); }
-.przycisk-ziel:hover { background: var(--z800); }
 .przycisk-duzy { font-size: 1.1rem; padding: 1rem 2.2rem; }
 .przyciski { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
 
@@ -203,8 +201,10 @@ a:hover > .godlo { transform: rotate(-8deg); }
 .bohater h1 em { font-style: normal; color: var(--f700); }
 .bohater .zajawka { font-size: 1.2rem; line-height: 1.55; max-width: 34rem; margin-bottom: .75em; }
 /* akapit rozwinięcia pod zajawką: mniejszy stopień, żeby trzy akapity nie zepchnęły
-   przycisków poza pierwszy ekran telefonu */
-.bohater .zajawka + p { font-size: 1.02rem; color: var(--tekst-2); max-width: 34rem; margin-bottom: .75em; }
+   przycisków poza pierwszy ekran telefonu. Ten sam układ ma nagłówek strony Dołącz. */
+:is(.bohater, .strona-glowa) .zajawka + p {
+  font-size: 1.02rem; color: var(--tekst-2); max-width: 34rem; margin-bottom: .75em;
+}
 .bohater .zacheta {
   max-width: 34rem; margin-bottom: 1.5em;
   font-weight: 700; color: var(--z800);
@@ -399,7 +399,6 @@ dialog.podglad .p-licznik {
   aspect-ratio: 4 / 3.4; object-fit: cover; width: 100%;
   border-radius: var(--luk-foto); box-shadow: var(--cien-2);
 }
-.strona-glowa.bez-foto .szeroko { grid-template-columns: 1fr; }
 .strona-glowa figure:is(.figura-logo, .figura-znak) { justify-self: center; }
 .strona-glowa figure.figura-logo img {
   aspect-ratio: 900 / 1205; object-fit: contain; width: min(100%, 280px);
@@ -540,11 +539,6 @@ ul.lista-ok li::before {
 }
 .zgody .zgoda:has(input:checked) { border-color: var(--f300); background: var(--f50); }
 .zgody .zgoda.ma-blad { border-color: #C4405A; background: #FDF0F3; }
-/* zdanie prowadzące przed polem dobrowolnym: bez niego kolejna ramka wygląda
-   jak następna przeszkoda, a nie jak propozycja */
-.zgody .zgody-przejscie {
-  margin: 1.1rem 0 .6rem; font-size: .92rem; font-weight: 600; color: var(--z800);
-}
 .zgody .zgoda small { display: block; margin-top: .45rem; font-size: .88rem; color: var(--tekst-2); }
 
 /* zdjęcia w formularzu */
@@ -586,8 +580,8 @@ ul.lista-ok li::before {
 /* dwie kolumny o różnej długości zostawiały dziurę pod krótszą: kartami wyrównujemy wysokość */
 .dwie-kolumny.kolumny-karty { align-items: stretch; gap: 1.1rem; }
 .kolumny-karty > div {
-  background: var(--bialy); border: 1px solid var(--linia);
-  border-radius: var(--luk); padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.2rem, 3vw, 1.8rem);
+  background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
+  border-radius: var(--luk-panel); padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.2rem, 3vw, 1.8rem);
 }
 .kolumny-karty h2 { font-size: clamp(1.35rem, 2.6vw, 1.7rem); }
 /* stretch, a nie start: karty w rzędzie kończą się równo, zamiast zostawiać schodkową dziurę */
