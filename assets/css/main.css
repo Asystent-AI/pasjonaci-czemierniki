@@ -201,7 +201,14 @@ a:hover > .godlo { transform: rotate(-8deg); }
 }
 .bohater h1 { margin-bottom: .55em; }
 .bohater h1 em { font-style: normal; color: var(--f700); }
-.bohater .zajawka { font-size: 1.2rem; line-height: 1.55; max-width: 34rem; margin-bottom: 1.6em; }
+.bohater .zajawka { font-size: 1.2rem; line-height: 1.55; max-width: 34rem; margin-bottom: .75em; }
+/* akapit rozwinięcia pod zajawką: mniejszy stopień, żeby trzy akapity nie zepchnęły
+   przycisków poza pierwszy ekran telefonu */
+.bohater .zajawka + p { font-size: 1.02rem; color: var(--tekst-2); max-width: 34rem; margin-bottom: .75em; }
+.bohater .zacheta {
+  max-width: 34rem; margin-bottom: 1.5em;
+  font-weight: 700; color: var(--z800);
+}
 .bohater-foto { position: relative; }
 /* miękka poświata w barwach znaku zamiast łuku: zdjęcie zostaje bohaterem kadru */
 .bohater-foto::before {
@@ -250,28 +257,38 @@ a:hover > .godlo { transform: rotate(-8deg); }
 
 /* ---------- Kafle faktów ---------- */
 .fakty-kafle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+/* ramka i cień jak w każdym innym panelu na stronie: kafle różnią się tłem, nie budową */
 .kafel {
   border-radius: var(--luk-panel); padding: 1.6rem 1.7rem;
+  border: 1px solid var(--linia); box-shadow: var(--cien-1);
   display: flex; flex-direction: column; gap: .3rem; justify-content: center;
 }
 .kafel b { font-family: var(--naglowki); font-size: clamp(1.4rem, 2.6vw, 1.9rem); font-weight: 800; line-height: 1.15; }
 .kafel span { font-size: .98rem; font-weight: 600; }
-.kafel-f { background: var(--f100); } .kafel-f b { color: var(--f800); } .kafel-f span { color: var(--f900); }
-.kafel-z { background: var(--z100); } .kafel-z b { color: var(--z800); } .kafel-z span { color: var(--z800); }
-.kafel-k { background: var(--bialy); border: 1.5px solid var(--linia); } .kafel-k b { color: var(--atrament); }
+.kafel-f { background: var(--f100); border-color: var(--f200); } .kafel-f b { color: var(--f800); } .kafel-f span { color: var(--f900); }
+.kafel-z { background: var(--z100); border-color: var(--z200); } .kafel-z b { color: var(--z800); } .kafel-z span { color: var(--z800); }
+.kafel-k { background: var(--bialy); } .kafel-k b { color: var(--atrament); }
 
 /* ---------- Karty „co robimy” ---------- */
-/* karta jest ramką: zdjęcie leży w środku z własnym zaokrągleniem */
-.karty { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.1rem; }
+/* Pięć kart w jednym rzędzie dawało przy opisach po ~150 znaków słupki o 22 znakach
+   w wierszu. Siatka sześciu kolumn i span 2: trzy karty w pierwszym rzędzie, dwie
+   wyśrodkowane w drugim, bez dziury po prawej. */
+.karty { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.1rem; }
+.karty > .karta { grid-column: span 2; }
+.karty > .karta:nth-child(4) { grid-column: 2 / span 2; }
+/* zdjęcie wypełnia górę karty i przycina się jej zaokrągleniem, tak samo jak kolorowa
+   głowa karty świadczeń: bez ramki w ramce, którą robił dawny padding 8 px */
 .karta {
   background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
-  border-radius: var(--luk-panel); padding: 8px;
+  border-radius: var(--luk-panel);
   overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column;
   transition: transform var(--przej), box-shadow var(--przej), border-color var(--przej);
 }
 .karta:hover { transform: translateY(-4px); box-shadow: var(--cien-2); border-color: var(--f200); }
-.karta img { aspect-ratio: 4 / 3.2; object-fit: cover; width: 100%; border-radius: 13px; }
-.karta > div { padding: .9rem .65rem 1rem; }
+.karta img { aspect-ratio: 4 / 3.2; object-fit: cover; width: 100%; transition: transform .45s var(--luz); }
+/* zbliżenie zdjęcia pod kursorem: ten sam gest co w galerii */
+.karta:hover img { transform: scale(1.045); }
+.karta > div { padding: 1rem 1.2rem 1.15rem; }
 .karta h3 { font-size: 1.05rem; margin-bottom: .35em; }
 .karta p { font-size: .92rem; color: var(--tekst-2); margin: 0; }
 
@@ -776,10 +793,11 @@ ul.lista-ok li::before {
 }
 
 /* ---------- Zawijanie: tablet ---------- */
-@media (max-width: 1120px) {
-  .karty { grid-template-columns: repeat(3, 1fr); }
-}
 @media (max-width: 980px) {
+  /* dwie karty w rzędzie, piąta wyśrodkowana pod nimi */
+  .karty { grid-template-columns: repeat(4, 1fr); }
+  .karty > .karta:nth-child(4) { grid-column: span 2; }
+  .karty > .karta:nth-child(5) { grid-column: 2 / span 2; }
   .kryteria, .drogi { grid-template-columns: repeat(2, 1fr); }
   .partnerzy, .swiadczenia { grid-template-columns: repeat(2, 1fr); }
   .galeria { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 190px; }
@@ -856,8 +874,11 @@ ul.lista-ok li::before {
   .dol-siatka { grid-template-columns: 1fr; }
 
   /* karty „Co robimy” poziomo: pionowo pięć zdjęć 4/3.2 robiło 1900 px ściany */
-  .karta { flex-direction: row; align-items: center; gap: .8rem; }
-  .karta img { flex: none; width: 34%; aspect-ratio: 1; }
+  .karty > .karta, .karty > .karta:nth-child(4), .karty > .karta:nth-child(5) { grid-column: auto; }
+  /* w rzędzie zdjęcie zostaje kwadratową miniaturą w ramce: pasek na pełną wysokość
+     karty kadrowałby zdjęcie 4:3 do proporcji 0,6 i obcinał ludziom boki */
+  .karta { flex-direction: row; align-items: center; gap: .8rem; padding: 8px; }
+  .karta img { flex: none; width: 34%; aspect-ratio: 1; border-radius: 13px; }
   .karta > div { padding: .2rem .5rem .2rem 0; }
   .karta h3 { font-size: 1.08rem; margin-bottom: .25em; }
   .karta p { font-size: .9rem; }
@@ -873,8 +894,9 @@ ul.lista-ok li::before {
   .dol-kontakt small { font-size: .88rem; }
   /* nagłówki w kartach schodziły poniżej rozmiaru tekstu podstawowego (17 px) */
   :is(.droga, .swiadczenie) h3 { font-size: 1.12rem; }
-  /* zajawka: 19,2 px robiło 9 linii i spychało przycisk poza pierwszy ekran */
-  .zajawka { font-size: 1.1rem; }
+  /* zajawka: 19,2 px robiło 9 linii i spychało przycisk poza pierwszy ekran.
+     Selektor musi mieć dwie klasy, inaczej przegrywa z `.bohater .zajawka` i nie działa. */
+  :is(.bohater, .strona-glowa) .zajawka { font-size: 1.1rem; }
   .bohater .zajawka { margin-bottom: 1.3em; }
 }
 
@@ -882,6 +904,7 @@ ul.lista-ok li::before {
 @media (hover: none) {
   .galeria a:hover img { transform: none; }
   :is(.karta, .swiadczenie, .karta.widoczne, .swiadczenie.widoczne):hover { transform: none; }
+  .karta:hover img { transform: none; }
   .przycisk:hover { transform: none; box-shadow: var(--cien-1); }
 }
 

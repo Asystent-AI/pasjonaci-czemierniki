@@ -110,7 +110,13 @@ Pułapki, które już raz kosztowały czas i wracają przy każdej większej zmi
 * **animacje wejścia `.odslon`** działają tylko przy klasie `js` na `<html>` (skrypt w `<head>`),
   inaczej bez JS sekcje zostają niewidoczne;
 * **pole pułapki na roboty** chowaj klasą `.pulapka` (`clip-path`), nigdy przez `left: -9999px` —
-  rozpycha layout na Androidzie.
+  rozpycha layout na Androidzie;
+* **specyficzność zajawki**: `.bohater .zajawka` i `.strona-glowa .zajawka` mają dwie klasy, więc
+  reguła mobilna musi mieć tyle samo (`:is(.bohater, .strona-glowa) .zajawka`) — sam `.zajawka`
+  w media query nie robi nic;
+* **karty „Co robimy”** stoją na siatce sześciu (desktop) albo czterech (tablet) kolumn ze `span 2`:
+  trzy plus dwie wyśrodkowane, zamiast pięciu słupków po 209 px. Dokładając szóstą kartę,
+  popraw też `nth-child` w obu media query.
 
 Kontrasty palety policzone wzorem WCAG — wartości w komentarzach `assets/css/main.css`.
 
