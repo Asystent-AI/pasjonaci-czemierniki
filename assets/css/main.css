@@ -567,11 +567,6 @@ ul.lista-ok li::before {
 #sekcja-b.widoczna { display: block; }
 
 /* ---------- Sponsorzy ---------- */
-.cytat-duzy {
-  font-family: var(--naglowki); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.2rem);
-  line-height: 1.25; color: var(--atrament); letter-spacing: -.01em; max-width: 30ch; margin: 0;
-}
-.cytat-duzy em { font-style: normal; color: var(--z700); }
 .dwie-kolumny { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
 /* dwie kolumny o różnej długości zostawiały dziurę pod krótszą: kartami wyrównujemy wysokość */
 .dwie-kolumny.kolumny-karty { align-items: stretch; gap: 1.1rem; }
@@ -624,7 +619,7 @@ ul.lista-ok li::before {
 .swiadczenia-pointa {
   margin-top: 1.4rem; font-family: var(--naglowki); font-weight: 700;
   font-size: clamp(1.05rem, 2.2vw, 1.32rem); line-height: 1.35;
-  color: var(--atrament); max-width: 46rem;
+  color: var(--atrament); max-width: 62rem; text-wrap: pretty;
 }
 .swiadczenia-pointa em { font-style: normal; color: var(--z700); }
 .katalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
@@ -709,7 +704,6 @@ ul.lista-ok li::before {
 /* e-mail w bloku kontaktowym stał w linii 23 px wysokości: poniżej progu dotykowego */
 .kontakt-blok p > a { display: inline-flex; align-items: center; min-height: 44px; }
 .kontakt-blok .kontakt-blok-osoba { font-size: .92rem; color: var(--tekst-2); margin-bottom: .9rem; }
-.kontakt-blok .druk-info { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--linia); }
 
 /* ---------- Stopka ---------- */
 .dol { background: var(--f950); color: #C9B8DD; margin-top: clamp(1.5rem, 3vw, 2rem); }

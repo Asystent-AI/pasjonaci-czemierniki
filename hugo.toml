@@ -23,7 +23,7 @@ enableRobotsTXT = true
     pageRef = '/konkurs'
     weight = 10
   [[menus.main]]
-    name = 'Dla sponsorów'
+    name = 'Wesprzyj nas'
     pageRef = '/sponsorzy'
     weight = 20
   [[menus.main]]
