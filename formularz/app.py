@@ -62,13 +62,28 @@ _ostatnie: dict = {}
 
 
 def za_duzo_zgloszen(ip: str) -> bool:
+    """Sam odczyt licznika. Nieudane próby (za mało zdjęć, puste pole) NIE liczą się
+    do limitu, bo człowiek poprawiający formularz zablokowałby sobie wysyłkę na godzinę."""
     teraz = time.time()
     lista = [t for t in _ostatnie.get(ip, []) if teraz - t < 3600]
     _ostatnie[ip] = lista
-    if len(lista) >= 5:
-        return True
-    lista.append(teraz)
-    return False
+    return len(lista) >= 5
+
+
+def zanotuj_zgloszenie(ip: str) -> None:
+    _ostatnie.setdefault(ip, []).append(time.time())
+
+
+WZORZEC_EMAIL = re.compile(r"^[^@\s,;:<>\"]+@[^@\s,;:<>\"]+\.[A-Za-z]{2,}$")
+
+
+def bezpieczny_adres(adres: str) -> str:
+    """Adres do nagłówka wiadomości. Pole formularza wypełnia obcy człowiek, a znak nowej
+    linii w nagłówku to próba doklejenia własnego Bcc. Python takie nagłówki odrzuca
+    wyjątkiem, przez co przepadał cały e-mail do Koła: lepiej pominąć zły adres niż
+    stracić powiadomienie o zgłoszeniu."""
+    adres = "".join(z for z in adres.strip() if z.isprintable())
+    return adres if WZORZEC_EMAIL.match(adres) else ""
 
 
 def bezpieczna_nazwa(tekst: str, domyslna: str = "plik") -> str:
@@ -133,6 +148,7 @@ def zgloszenie():
         json.dumps({**dane, "ip": ip, "kiedy": kiedy.isoformat(), "zdjecia": zapisane},
                    ensure_ascii=False, indent=2), encoding="utf-8")
     log.info("Zapisano zgłoszenie: %s (%d zdjęć)", folder.name, len(zapisane))
+    zanotuj_zgloszenie(ip)
 
     # 2. E-mail do organizatorów
     try:
@@ -143,7 +159,7 @@ def zgloszenie():
     # 3. Potwierdzenie dla zgłaszającego. Osobna próba: jego skrzynka może odrzucić
     # wiadomość, a to nie może wpłynąć na maila do Koła ani na odpowiedź formularza.
     try:
-        potwierdz_zgloszenie(dane)
+        potwierdz_zgloszenie(dane, kiedy, zdjecia=len(zapisane))
     except Exception:
         log.exception("Nie udało się wysłać potwierdzenia do zgłaszającego")
 
@@ -152,22 +168,36 @@ def zgloszenie():
 
 def szkielet(naglowek: str, wprowadzenie: str, srodek: str, stopka: str = "") -> str:
     """Mail w jednej kolumnie na tabelach: Gmail, Outlook i poczta na telefonie
-    renderują to tak samo, a flexbox i grid w wielu klientach nie działają."""
+    renderują to tak samo, a flexbox i grid w wielu klientach nie działają.
+
+    Nagłówek jest jasny, bo logotyp Klubu ma przezroczyste tło i ciemny napis
+    na obwodzie: na ciemnym pasku napis znikał, a podkładka pod logo wyglądała
+    jak biały kwadrat wszędzie tam, gdzie klient poczty ignoruje border-radius.
+    Pasek marki nad nagłówkiem składa się z dwóch komórek tabeli, bo gradientu
+    CSS Outlook nie renderuje."""
     return f"""<!doctype html>
 <html lang="pl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light"></head>
 <body style="margin:0;padding:0;background:#F5F2F8;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F2F8;padding:24px 12px;">
 <tr><td align="center">
   <table role="presentation" width="600" cellpadding="0" cellspacing="0"
     style="width:600px;max-width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;
     font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:{ATRAMENT};">
-    <tr><td style="background:{FIOLET_CIEMNY};padding:22px 28px;">
+    <tr><td style="padding:0;font-size:0;line-height:0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td width="68%" height="5" style="background:{FIOLET};font-size:0;line-height:0;">&nbsp;</td>
+        <td width="32%" height="5" style="background:{ZIELEN};font-size:0;line-height:0;">&nbsp;</td>
+      </tr></table>
+    </td></tr>
+    <tr><td style="padding:22px 28px 18px;border-bottom:1px solid #EDE8F3;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-        <td style="padding-right:14px;"><img src="cid:logo-klubu" width="52" height="52" alt=""
-          style="display:block;border-radius:50%;background:#fff;"></td>
-        <td style="color:#FFFFFF;font-size:17px;font-weight:700;line-height:1.3;">{naglowek}
-          <div style="font-size:13px;font-weight:400;color:#D9C4EE;padding-top:3px;">{wprowadzenie}</div>
+        <td style="padding-right:16px;"><img src="cid:logo-klubu" width="74" height="74"
+          alt="Klub Pasjonatów Ogrodnictwa Czemierniki" style="display:block;"></td>
+        <td style="color:{ATRAMENT};font-size:19px;font-weight:700;line-height:1.25;">{naglowek}
+          <div style="font-size:13px;font-weight:400;color:{SZARY};padding-top:5px;">{wprowadzenie}</div>
         </td>
       </tr></table>
     </td></tr>
@@ -207,8 +237,9 @@ def zloz_wiadomosc(temat: str, tekst: str, tresc_html: str, do: str = MAIL_TO,
                    odpowiedz_do: str = "") -> EmailMessage:
     """Wersja tekstowa i HTML w jednej wiadomości, logo osadzone przy HTML-u."""
     wiadomosc = EmailMessage()
-    wiadomosc["Subject"] = temat
-    wiadomosc["To"] = do
+    wiadomosc["Subject"] = " ".join(temat.split())
+    wiadomosc["To"] = bezpieczny_adres(do) or MAIL_TO
+    odpowiedz_do = bezpieczny_adres(odpowiedz_do)
     if odpowiedz_do:
         wiadomosc["Reply-To"] = odpowiedz_do
     wiadomosc.set_content(tekst)
@@ -306,24 +337,38 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime, zdjecia: int = 0,
     wyslij_smtp(wiadomosc)
 
 
-def potwierdz_zgloszenie(dane: dict) -> None:
+def potwierdz_zgloszenie(dane: dict, kiedy: datetime, zdjecia: int = 0) -> None:
     """Potwierdzenie dla zgłaszającego. Bez niego człowiek nie ma żadnego śladu,
-    że zgłoszenie doszło, a formularz nie daje nic do wydrukowania."""
-    if not dane["email"]:
+    że zgłoszenie doszło, a formularz nie daje nic do wydrukowania. Wypis tego,
+    co dotarło, jest tu ważniejszy od ozdobników: zdjęcia z telefonu potrafią się
+    nie doładować i uczestnik musi wiedzieć, że komplet jest po naszej stronie."""
+    adres = bezpieczny_adres(dane["email"])
+    if not adres:
         return
+    cudzy = dane["relacja"].startswith("Zgłoszenie cudzego")
+    adres_ogrodu = dane["adres_ogrodu"] or (dane["wl_adres_ogrodu"] if cudzy else "") or dane["adres"]
     imie = dane["imie_nazwisko"].split()[0] if dane["imie_nazwisko"] else ""
-    tekst = "\n".join([
+    linie = [
         f"{imie}, dziękujemy za zgłoszenie ogrodu do konkursu Najpiękniejszy Ogród Gminy "
         "Czemierniki 2026.",
+        "",
+        "Co do nas dotarło:",
+        f"- zgłoszenie z dnia {kiedy:%d.%m.%Y}, godz. {kiedy:%H:%M}",
+        f"- ogród: {adres_ogrodu}",
+        f"- zdjęcia: {zdjecia}",
+        "- opis ogrodu i rozwiązań przyjaznych naturze",
         "",
         "Co dalej:",
         "1. Komisja Konkursowa sprawdza zgłoszenie i wybiera ogrody do wizytacji.",
         "2. Zadzwonimy, żeby uzgodnić termin wizyty w dniach 18-21 sierpnia 2026.",
         "3. Wyniki ogłaszamy 22 sierpnia na scenie Dożynek Gminno-Parafialnych w Czemiernikach.",
-        "",
-        f"Pytania: {TELEFON_KLUBU} albo {MAIL_TO}.",
-        "Klub Pasjonatów Ogrodnictwa przy KGW Czemierniki",
-    ])
+    ]
+    if dane["osw_wizerunek"] != "TAK":
+        linie += ["", "W formularzu nie zaznaczono zgody na wizerunek, więc pokażemy sam ogród. "
+                      "Jeśli zmienisz zdanie, wystarczy powiedzieć o tym komisji przy wizytacji."]
+    linie += ["", f"Pytania: {TELEFON_KLUBU} albo {MAIL_TO}.",
+              "Klub Pasjonatów Ogrodnictwa przy KGW Czemierniki"]
+
     kroki = "".join(
         f'<tr><td style="padding:0 12px 12px 0;vertical-align:top;"><div style="width:26px;height:26px;'
         f'border-radius:50%;background:{FIOLET};color:#fff;font-size:14px;font-weight:700;'
@@ -334,20 +379,31 @@ def potwierdz_zgloszenie(dane: dict) -> None:
             "Dzwonimy, żeby uzgodnić termin wizyty. Wizytacje trwają <b>18–21 sierpnia</b>.",
             "Wyniki ogłaszamy <b>22 sierpnia</b> na scenie Dożynek Gminno-Parafialnych.",
         ], start=1))
-    srodek = (f'<p style="margin:0 0 16px;font-size:16px;">{escape(imie)}, dziękujemy! '
-              "Twoje zgłoszenie do konkursu dotarło do nas w komplecie.</p>"
-              f'<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'
-              f'color:{ZIELEN};padding:4px 0 10px;">Co dalej</div>'
-              f'<table role="presentation" cellpadding="0" cellspacing="0" width="100%">{kroki}</table>'
-              + ramka("Zgłoszony ogród: <b>" + escape(dane["adres_ogrodu"] or dane["adres"]) + "</b>",
-                      FIOLET, "#F7F2FC"))
+    srodek = (f'<p style="margin:0 0 18px;font-size:16px;">{escape(imie)}, dziękujemy! '
+              "Twoje zgłoszenie do konkursu dotarło do nas w komplecie.</p>")
+    srodek += sekcja("Co do nas dotarło", [
+        ("Zgłoszenie", f"{kiedy:%d.%m.%Y}, godz. {kiedy:%H:%M}"),
+        ("Ogród", escape(adres_ogrodu)),
+        ("Zdjęcia", f"{zdjecia} szt."),
+        ("Opis ogrodu", "przyjęty"),
+    ])
+    srodek += (f'<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'
+               f'color:{ZIELEN};padding:4px 0 10px;">Co dalej</div>'
+               f'<table role="presentation" cellpadding="0" cellspacing="0" width="100%">{kroki}</table>')
+    if dane["osw_wizerunek"] != "TAK":
+        srodek += ramka(
+            "W formularzu nie zaznaczono zgody na wizerunek, więc pokażemy sam ogród, bez Ciebie "
+            "na zdjęciach. Jeśli zmienisz zdanie, wystarczy powiedzieć o tym komisji przy wizytacji.",
+            FIOLET, "#F7F2FC")
     stopka = (f"Masz pytania? Zadzwoń pod {telefon_html(TELEFON_KLUBU)} albo odpisz na tę wiadomość.<br>"
               "Klub Pasjonatów Ogrodnictwa przy Kole Gospodyń Wiejskich Czemierniki.")
     wyslij_smtp(zloz_wiadomosc(
         "Potwierdzenie zgłoszenia do konkursu ogrodowego",
-        tekst,
-        szkielet("Zgłoszenie przyjęte", "Najpiękniejszy Ogród Gminy Czemierniki 2026", srodek, stopka),
-        do=dane["email"], odpowiedz_do=MAIL_TO))
+        "\n".join(linie),
+        szkielet("Zgłoszenie przyjęte",
+                 "Najpiękniejszy Ogród Gminy Czemierniki 2026 &middot; „Ogród przyjazny naturze”",
+                 srodek, stopka),
+        do=adres, odpowiedz_do=MAIL_TO))
 
 
 @app.post("/api/kontakt")
@@ -376,6 +432,7 @@ def kontakt():
                     "wiadomosc": wiadomosc, "temat": temat, "ip": ip, "kiedy": kiedy.isoformat()},
                    ensure_ascii=False, indent=2), encoding="utf-8")
     log.info("Zapisano wiadomość (%s) od: %s", temat, imie)
+    zanotuj_zgloszenie(ip)
 
     tytuly = {
         "dolacz": f"Klub Pasjonatów: {imie} chce dołączyć",
@@ -397,7 +454,8 @@ def kontakt():
         linie_tekstu.append(f"Miejscowość: {miejscowosc}")
     linie_tekstu += ["", wiadomosc or "(bez treści, prośba o kontakt)"]
     tresc = "\n".join(linie_tekstu)
-    mailem = "@" in dane_kontaktowe and " " not in dane_kontaktowe
+    adres_zwrotny = bezpieczny_adres(dane_kontaktowe)
+    mailem = bool(adres_zwrotny)
     kontakt_html = (f'<a href="mailto:{escape(dane_kontaktowe)}" style="color:{FIOLET};">'
                     f'{escape(dane_kontaktowe)}</a>' if mailem else telefon_html(dane_kontaktowe))
     srodek = sekcja("Kto pisze", [
@@ -419,14 +477,14 @@ def kontakt():
         wyslij_smtp(zloz_wiadomosc(
             tytul, tresc,
             szkielet(naglowek, wprowadzenie, srodek, stopka),
-            odpowiedz_do=dane_kontaktowe if mailem else ""))
+            odpowiedz_do=adres_zwrotny))
     except Exception:
         log.exception("Wysyłka wiadomości kontaktowej nie powiodła się, kopia na dysku")
 
     # potwierdzenie dla piszącego, gdy zostawił adres e-mail
     if mailem and temat == "dolacz":
         try:
-            potwierdz_zapis(imie, dane_kontaktowe)
+            potwierdz_zapis(imie, adres_zwrotny)
         except Exception:
             log.exception("Nie udało się wysłać potwierdzenia zapisu do Klubu")
 
