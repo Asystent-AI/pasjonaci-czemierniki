@@ -45,7 +45,8 @@ POLA = [
     ("wl_telefon", "Telefon właściciela"),
     ("opis", "Opis ogrodu"),
     ("osw_karta", "Akceptacja Regulaminu i Klauzuli RODO, prawa autorskie do zdjęć"),
-    ("osw_wykorzystanie", "Zgoda na publikację zdjęć, opisu i wizerunku"),
+    ("osw_wykorzystanie", "Licencja na zdjęcia ogrodu i opis (§ 8 ust. 2 Regulaminu)"),
+    ("osw_wizerunek", "ZGODA NA WIZERUNEK I NAZWISKO PRZY WYNIKACH (dobrowolna)"),
 ]
 
 # ponytail: limit zgłoszeń per IP trzymany w pamięci procesu; przy jednym
@@ -86,9 +87,11 @@ def zgloszenie():
         return jsonify(ok=False, blad="Za dużo zgłoszeń z tego adresu. Spróbuj za godzinę."), 429
 
     dane = {klucz: request.form.get(klucz, "").strip() for klucz, _ in POLA}
-    # oba oświadczenia odpowiadają sekcji E karty zgłoszeniowej i muszą dać się wykazać
-    # (art. 7 ust. 1 RODO); sprawdzamy je też tutaj, bo walidację w przeglądarce da się obejść
-    for klucz in ("osw_karta", "osw_wykorzystanie"):
+    # Dwa pierwsze oświadczenia są warunkiem udziału (akceptacja Regulaminu i licencja na
+    # zdjęcia z § 8 ust. 2). Trzecie, zgoda na wizerunek, MUSI zostać dobrowolne: wymuszona
+    # jest nieważna (art. 7 ust. 4 RODO). Wszystkie trzy zapisujemy, bo zgodę trzeba umieć
+    # wykazać (art. 7 ust. 1 RODO), a walidację w przeglądarce da się obejść.
+    for klucz in ("osw_karta", "osw_wykorzystanie", "osw_wizerunek"):
         dane[klucz] = "TAK" if request.form.get(klucz) in ("TAK", "on", "true", "1") else "NIE"
     braki = [k for k in WYMAGANE if not dane[k]]
     if braki:
@@ -149,9 +152,15 @@ def wyslij_email(dane: dict, folder: Path, kiedy: datetime) -> None:
         if dane[klucz]:
             linie.append(f"{etykieta}: {dane[klucz]}")
     linie += ["",
-              "Oba oświadczenia z sekcji E karty zgłoszeniowej zostały zaznaczone: bez nich "
-              "formularz nie przyjmuje zgłoszenia.",
-              f"Kopia zgłoszenia na serwerze: {folder}"]
+              "Oświadczenia obowiązkowe (Regulamin, klauzula RODO, prawa autorskie, licencja "
+              "na zdjęcia) zostały zaznaczone: bez nich formularz nie przyjmuje zgłoszenia."]
+    if dane["osw_wizerunek"] == "TAK":
+        linie.append("Zgoda na wizerunek i na podanie imienia i nazwiska przy wynikach: JEST.")
+    else:
+        linie.append(
+            "UWAGA: BRAK zgody na wizerunek. Publikujemy sam ogród, a przy wynikach tylko "
+            "miejscowość. Zgodę można zebrać podczas wizytacji, na kartce do podpisu.")
+    linie.append(f"Kopia zgłoszenia na serwerze: {folder}")
     wiadomosc.set_content("\n".join(linie))
 
     for plik in sorted(folder.iterdir()):

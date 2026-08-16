@@ -363,6 +363,7 @@
     // oświadczenia muszą dojechać do maila: bez nich Koło nie ma czym wykazać zgody
     dane.append('osw_karta', form.osw_karta.checked ? 'TAK' : 'NIE');
     dane.append('osw_wykorzystanie', form.osw_wykorzystanie.checked ? 'TAK' : 'NIE');
+    dane.append('osw_wizerunek', form.osw_wizerunek.checked ? 'TAK' : 'NIE');
     zdjecia.forEach(function (z) { dane.append('zdjecia', z.plik, z.nazwa); });
 
     wyslijGuzik.disabled = true;

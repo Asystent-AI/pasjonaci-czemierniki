@@ -540,6 +540,11 @@ ul.lista-ok li::before {
 }
 .zgody .zgoda:has(input:checked) { border-color: var(--f300); background: var(--f50); }
 .zgody .zgoda.ma-blad { border-color: #C4405A; background: #FDF0F3; }
+/* zdanie prowadzące przed polem dobrowolnym: bez niego kolejna ramka wygląda
+   jak następna przeszkoda, a nie jak propozycja */
+.zgody .zgody-przejscie {
+  margin: 1.1rem 0 .6rem; font-size: .92rem; font-weight: 600; color: var(--z800);
+}
 .zgody .zgoda small { display: block; margin-top: .45rem; font-size: .88rem; color: var(--tekst-2); }
 
 /* zdjęcia w formularzu */
