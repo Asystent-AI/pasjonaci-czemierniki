@@ -393,7 +393,7 @@
       if (ok) {
         slad('zgloszenie-konkursowe');
         wynik.className = 'wynik-wyslania sukces';
-        wynik.textContent = 'Dziękujemy! Zgłoszenie dotarło do organizatorów. Komisja skontaktuje się telefonicznie, aby umówić wizytę w ogrodzie.';
+        wynik.textContent = 'Dziękujemy! Zgłoszenie dotarło do organizatorów. Komisja skontaktuje się telefonicznie, aby umówić wizytę w ogrodzie. Jeśli podano adres e-mail, potwierdzenie jest już w skrzynce.';
         form.reset();
         zdjecia.forEach(function (z) { URL.revokeObjectURL(z.url); });
         zdjecia = [];

@@ -6,13 +6,17 @@
       <div class="znaczki">
         <span class="znaczek znaczek-z">Udział bezpłatny</span>
         <span class="znaczek znaczek-f">Bez członkostwa w KGW</span>
+        <span class="znaczek znaczek-kontur">Czemierniki i okolice</span>
       </div>
       <h1>Przyjdź i zobacz, czy to <em>dla Ciebie</em></h1>
       <p class="zajawka">Nie trzeba się znać na ogrodnictwie. Nie trzeba mieć dużego ogrodu,
-      balkon i kilka doniczek też się liczą. Pierwsze spotkanie nic nie kosztuje
-      i do niczego nie zobowiązuje.</p>
+      balkon i kilka doniczek też się liczą. Nie trzeba nawet mieszkać w Czemiernikach:
+      nasze korzenie są tutaj, ale przyjmujemy pasjonatów zieleni z okolicznych miejscowości
+      i z całego regionu.</p>
+      <p>Zostaw kontakt, a odezwiemy się i zaprosimy Cię na najbliższe spotkanie. Pierwsze
+      spotkanie nic nie kosztuje i do niczego nie zobowiązuje.</p>
       <div class="przyciski">
-        <a class="przycisk przycisk-duzy" href="tel:+48795716644">Zadzwoń do Beaty</a>
+        <a class="przycisk przycisk-duzy" href="#zapisz-sie">Zostaw kontakt</a>
       </div>
     </div>
     <figure class="figura-znak">
@@ -22,49 +26,14 @@
   </div>
 </section>
 
-<section class="sekcja">
-  <div class="szeroko">
-    <div class="dwie-kolumny">
-      <div>
-        <h2>Co robimy</h2>
-        <ul class="lista-ok">
-          <li>spotykamy się i wymieniamy wiedzą ogrodniczą,</li>
-          <li>wymieniamy się nasionami, sadzonkami i roślinami,</li>
-          <li>odwiedzamy ogrody w gminie,</li>
-          <li>prowadzimy konkurs na Najpiękniejszy Ogród Gminy Czemierniki,</li>
-          <li>działamy na rzecz zieleni w gminie.</li>
-        </ul>
-        <p>Zajrzyj też do <a href="/#galeria">galerii z naszych spotkań</a>.</p>
-      </div>
-      <div>
-        <img class="powieksz" data-duze="/zdjecia/koty-d.webp"
-          src="/zdjecia/koty-m.webp" srcset="/zdjecia/koty-s.webp 500w, /zdjecia/koty-m.webp 800w"
-          sizes="(max-width: 900px) 92vw, 45vw" width="800" height="601" loading="lazy"
-          alt="Dwa koty odpoczywają na kamieniach w jednym z odwiedzanych ogrodów"
-          style="border-radius:var(--luk-foto);box-shadow:var(--cien-1)">
-        <p style="font-size:.9rem;color:var(--tekst-2);margin-top:.6rem">Na plenerach poznajemy
-        też najbardziej wylegiwanych mieszkańców ogrodów.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sekcja sekcja-f">
+<section class="sekcja" id="zapisz-sie">
   <div class="szeroko waskie">
-    <div class="kontakt-blok">
-      <h2>Jak dołączyć</h2>
-      <a class="tel-duzy" href="tel:+48795716644">795 716 644</a>
-      <p>Zadzwoń do Beaty, koordynatorki Klubu.</p>
-      <p>Albo napisz na <a href="mailto:kgw.czemierniki@gmail.com">kgw.czemierniki@gmail.com</a>,
-      albo po prostu przyjdź na najbliższe spotkanie. Terminy ogłaszamy na
-      <a href="https://www.facebook.com/kgw.czemierniki" target="_blank" rel="noopener">profilu KGW na Facebooku</a>.</p>
-    </div>
-
-    <form class="formularz formularz-mini" style="margin-top:2rem"
+    <form class="formularz formularz-mini"
       data-sukces="Dziękujemy! Odezwiemy się i zaprosimy Cię na najbliższe spotkanie." novalidate>
-      <h2 style="font-size:1.4rem">Wolisz, żebyśmy się odezwali?</h2>
-      <p class="legenda-opis">Zostaw kontakt do siebie. Zadzwonimy albo napiszemy i zaprosimy Cię
-      na najbliższe spotkanie. Bez żadnych zobowiązań.</p>
+      <h2>Zapisz się do Klubu</h2>
+      <p class="legenda-opis">Wystarczy imię i kontakt do Ciebie. Resztą zajmiemy się my:
+      zadzwonimy albo napiszemy, powiemy, kiedy i gdzie widzimy się najbliżej, i odpowiemy
+      na wszystkie pytania. Zapisy są bezpłatne i nie wiążą się z żadną składką.</p>
       <input type="hidden" name="temat" value="dolacz">
       <div class="pola-2">
         <div class="pole">
@@ -79,6 +48,11 @@
         </div>
       </div>
       <div class="pole">
+        <label for="d-miejscowosc">Miejscowość <span style="font-weight:500;color:var(--tekst-2)">(niewymagana)</span></label>
+        <input type="text" id="d-miejscowosc" name="miejscowosc" autocomplete="address-level2"
+          placeholder="Czemierniki, Wohyń, Kock, Radzyń Podlaski...">
+      </div>
+      <div class="pole">
         <label for="d-wiadomosc">Chcesz coś dopisać? <span style="font-weight:500;color:var(--tekst-2)">(niewymagane)</span></label>
         <textarea id="d-wiadomosc" name="wiadomosc" style="min-height:6rem"
           placeholder="np. mam balkon i dopiero zaczynam, interesują mnie warsztaty"></textarea>
@@ -87,9 +61,51 @@
         <label for="d-www">Zostaw to pole puste</label>
         <input type="text" id="d-www" name="strona_www" tabindex="-1" autocomplete="off">
       </p>
-      <button type="submit" class="przycisk wyslij">Wyślij</button>
+      <button type="submit" class="przycisk wyslij">Wyślij zgłoszenie</button>
       <div class="wynik-wyslania" role="status"></div>
     </form>
+  </div>
+</section>
+
+<section class="sekcja sekcja-z">
+  <div class="szeroko">
+    <div class="dwie-kolumny">
+      <div>
+        <h2>Co robimy w Klubie</h2>
+        <ul class="lista-ok">
+          <li>spotykamy się przy kawie i wymieniamy wiedzą ogrodniczą,</li>
+          <li>wymieniamy się nasionami, sadzonkami i roślinami, zawsze za darmo,</li>
+          <li>odwiedzamy ogrody klubowiczów w Czemiernikach i w okolicznych miejscowościach,</li>
+          <li>prowadzimy konkurs na Najpiękniejszy Ogród Gminy Czemierniki,</li>
+          <li>organizujemy warsztaty i zielone akcje dla mieszkańców.</li>
+        </ul>
+        <p>Nikt tu nikogo nie odpytuje z wiedzy i nie ma progu wejścia. Przyjdź raz, posłuchaj,
+        zadaj pytania, a potem zdecyduj. Zajrzyj też do <a href="/#galeria">galerii z naszych
+        spotkań</a>.</p>
+      </div>
+      <div>
+        <img class="powieksz" data-duze="/zdjecia/koty-d.webp"
+          src="/zdjecia/koty-m.webp" srcset="/zdjecia/koty-s.webp 500w, /zdjecia/koty-m.webp 800w"
+          sizes="(max-width: 900px) 92vw, 45vw" width="800" height="601" loading="lazy"
+          alt="Dwa koty odpoczywają na kamieniach w jednym z odwiedzanych ogrodów"
+          style="border-radius:var(--luk-foto);box-shadow:var(--cien-1)">
+        <p style="font-size:.9rem;color:var(--tekst-2);margin-top:.6rem">Na plenerach poznajemy
+        też najbardziej wylegiwanych mieszkańców ogrodów.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sekcja">
+  <div class="szeroko waskie">
+    <div class="kontakt-blok">
+      <h2>Wolisz porozmawiać?</h2>
+      <a class="tel-duzy" href="tel:+48795716644">795 716 644</a>
+      <p class="kontakt-blok-osoba">Beata Michalska, koordynatorka Klubu</p>
+      <p>Możesz też napisać na <a href="mailto:kgw.czemierniki@gmail.com">kgw.czemierniki@gmail.com</a>
+      albo po prostu przyjść na najbliższe spotkanie. Terminy ogłaszamy na
+      <a href="https://www.facebook.com/kgw.czemierniki" target="_blank" rel="noopener">profilu KGW na Facebooku</a>.</p>
+    </div>
   </div>
 </section>
 

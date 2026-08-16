@@ -1,5 +1,5 @@
 ---
 title: "Dołącz do Klubu"
-description: "Udział w spotkaniach Klubu Pasjonatów Ogrodnictwa jest bezpłatny i nie wymaga członkostwa w KGW. Przyjdź i zobacz."
+description: "Zapisy do Klubu Pasjonatów Ogrodnictwa: zostaw kontakt, a zaprosimy Cię na najbliższe spotkanie. Udział bezpłatny, bez członkostwa w KGW, także dla osób spoza Czemiernik."
 layout: "dolacz"
 ---

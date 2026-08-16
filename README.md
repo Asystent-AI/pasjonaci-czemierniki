@@ -65,6 +65,34 @@ Identyfikator strony i adres skryptu siedzą w `hugo.toml` (`umamiId`, `umami`),
 w `layouts/baseof.html`. Zdarzenia konwersji wysyła `assets/js/strona.js` funkcją `slad()`:
 `zgloszenie-konkursowe`, `wiadomosc` (z tematem), `telefon`, `e-mail`, `pobranie-pdf`.
 
+## Formularze i poczta
+
+Backend `formularz/app.py` (Flask + gunicorn, kontener `pasjonaci-formularz`, ruch przez
+Traefika na `PathPrefix(/api)`). Dwa wejścia: `/api/zgloszenie` (konkurs, ze zdjęciami)
+i `/api/kontakt` (Dołącz, Kontakt, Wesprzyj). Każde zgłoszenie **najpierw ląduje na dysku**
+w wolumenie `pasjonaci-zgloszenia`, dopiero potem idzie mailem.
+
+Wiadomości wychodzą jako `multipart/alternative`: wersja tekstowa plus HTML na tabelach
+(flexbox i grid w klientach pocztowych nie działają). Logo to **osadzony obraz** `logo-mail.png`
+z `cid:logo-klubu`, bo obrazy z sieci klienty blokują domyślnie. Plik generuje się z
+`static/odznaka.png` spłaszczonej na biel do 176 px i **musi być kopiowany w Dockerfile**
+razem z `app.py`.
+
+Cztery szablony: zgłoszenie konkursowe do Koła (z ramką o zgodzie na wizerunek),
+wiadomość kontaktowa do Koła, potwierdzenie zgłoszenia dla uczestnika, potwierdzenie zapisu
+do Klubu. Potwierdzenia wychodzą tylko wtedy, gdy nadawca zostawił adres e-mail, i lecą
+w osobnym `try`, żeby odbicie od jego skrzynki nie wpłynęło na maila do Koła.
+
+Podgląd szablonów bez wysyłki: podmień `app.wyslij_smtp` na zbieranie do listy, wywołaj
+`wyslij_email` / `potwierdz_zgloszenie` i zapisz `get_body(preferencelist=('html',))` do pliku.
+
+Wdrożenie backendu (kontener stoi na `docker run`, nie na compose, więc labele Traefika
+trzeba podać ponownie przy odtwarzaniu):
+
+```bash
+scp formularz/app.py formularz/logo-mail.png formularz/Dockerfile root@204.168.196.86:/opt/pasjonaci-formularz/
+```
+
 ## Sveltia CMS (panel dla Beaty) — etap 2
 
 1. Repo tego katalogu na GitHubie, konto dla Beaty z dostępem tylko do niego.
