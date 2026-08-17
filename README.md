@@ -120,6 +120,21 @@ i `disposition="inline"` przy `add_related`: z `filename=` biblioteka ustawia
 `Content-Disposition: attachment` i logo pokazuje się jako załącznik ze spinaczem.
 Nagłówek maila jest jasny, bo logotyp ma ciemny napis na obwodzie.
 
+### Maile pisane ręcznie z Gmaila
+
+Oprawa firmowa dla korespondencji wychodzącej ze skrzynki Koła leży poza tym repo,
+w `output/2026-08-17-szablon-mail-kgw.html` (otwierasz w przeglądarce, `Ctrl+A`, `Ctrl+C`,
+wklejasz do okna wiadomości w Gmailu). Repo dostarcza jej **dwa obrazy z publicznych
+adresów**, bo w ręcznym mailu nie ma jak osadzić `cid`:
+
+- `static/odznaka-240.png` — pieczęć w nagłówku,
+- `static/logotyp-pion-mail.png` — logotyp pionowy w stopce przy podpisie, 184 × 246 px
+  (2 × wymiar wyświetlania), generowany z `input/Logotyp_Tył_wysoka_jakość_bez_tła.png`
+  przyciętej do zawartości. **PNG, nie webp** — Outlook webp nie renderuje.
+
+Jeśli któryś z tych plików zniknie ze `static/`, stopka maili rozsypie się u odbiorców,
+a nie u nas.
+
 **Nabór pilnuje serwer**, nie tylko baner: `TERMIN_ZGLOSZEN` (domyślnie `2026-08-16`, ostatni
 dzień z § 5 pkt 1 regulaminu) odcina `/api/zgloszenie` po tej dacie odpowiedzią 403. Kolejna
 edycja albo przedłużenie naboru: zmienna w `/opt/pasjonaci-formularz/smtp.env` i restart
