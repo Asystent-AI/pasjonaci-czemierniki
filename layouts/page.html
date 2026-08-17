@@ -1,6 +1,23 @@
 {{ define "main" }}
-<article class="srodek">
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
-</article>
+
+{{/* Uklad dla podstron tekstowych: polityka prywatnosci, w przyszlosci regulaminy.
+     Naglowek jednokolumnowy, bo takie strony nie maja zdjecia. */}}
+{{/* naglowek w tej samej kolumnie co tresc, inaczej tytul zaczyna sie
+     o 200 px na lewo od pierwszego akapitu */}}
+<section class="strona-glowa strona-glowa-solo">
+  <div class="szeroko waskie">
+    <div>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.zajawka }}<p class="zajawka">{{ . }}</p>{{ end }}
+      {{ with .Params.zaktualizowano }}<p class="data-aktualizacji">Ostatnia aktualizacja: <strong>{{ . }}</strong></p>{{ end }}
+    </div>
+  </div>
+</section>
+
+<section class="sekcja">
+  <div class="szeroko waskie tresc">
+    {{ .Content }}
+  </div>
+</section>
+
 {{ end }}

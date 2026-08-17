@@ -24,6 +24,45 @@
     else if (/\.pdf($|\?)/i.test(adres)) slad('pobranie-pdf', { plik: adres.split('/').pop() });
   });
 
+  /* ---------- Statystyki: przełącznik na stronie polityki prywatności ----------
+     Umami czyta klucz umami.disabled z localStorage i przy wartości 1 nie wysyła nic.
+     Instrukcja "otwórz konsolę i wklej linijkę" nie jest drogą dla nikogo, a na telefonie
+     nie istnieje w ogóle: przeglądarki mobilne nie mają konsoli. Skoro polityka obiecuje
+     prawo sprzeciwu, musi dać przycisk, który da się nacisnąć palcem. */
+  var przelacznik = document.getElementById('przelacznik-statystyk');
+  if (przelacznik) {
+    var stanEl = document.getElementById('stan-statystyk');
+    var pamiecDziala = (function () {
+      try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return true; }
+      catch (e) { return false; }
+    })();
+
+    if (!pamiecDziala) {
+      // prywatne okno albo zablokowane dane witryny: przycisk nic by nie zapamiętał
+      przelacznik.disabled = true;
+      przelacznik.textContent = 'Twoja przeglądarka blokuje zapis ustawień';
+      if (stanEl) stanEl.textContent = 'Napisz do nas, wyłączymy liczenie po naszej stronie.';
+    } else {
+      var odswiez = function () {
+        var wylaczone = localStorage.getItem('umami.disabled') === '1';
+        przelacznik.textContent = wylaczone ? 'Włącz liczenie moich wizyt' : 'Wyłącz liczenie moich wizyt';
+        przelacznik.setAttribute('aria-pressed', wylaczone ? 'true' : 'false');
+        przelacznik.classList.toggle('przycisk-2', wylaczone);
+        if (stanEl) {
+          stanEl.textContent = wylaczone
+            ? 'Gotowe. W tej przeglądarce nie liczymy już Twoich wizyt.'
+            : 'Teraz Twoje wizyty są liczone anonimowo razem z pozostałymi.';
+        }
+      };
+      przelacznik.addEventListener('click', function () {
+        if (localStorage.getItem('umami.disabled') === '1') localStorage.removeItem('umami.disabled');
+        else localStorage.setItem('umami.disabled', '1');
+        odswiez();
+      });
+      odswiez();
+    }
+  }
+
   /* ---------- Menu mobilne ---------- */
   var guzik = document.querySelector('.menu-guzik');
   var menu = document.getElementById('menu');

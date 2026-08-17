@@ -784,6 +784,47 @@ ul.lista-ok li::before {
   :is(.karta, .swiadczenie).widoczne:hover { transform: translateY(-4px); }
 }
 
+/* ---------- Podstrona tekstowa: polityka prywatności, w przyszłości regulaminy ---------- */
+/* nagłówek bez zdjęcia, więc grid 7fr/4fr z .strona-glowa zostawiłby pustą kolumnę */
+.strona-glowa-solo .szeroko { grid-template-columns: minmax(0, 1fr); }
+.strona-glowa-solo .zajawka { max-width: 44rem; }
+.data-aktualizacji { color: var(--tekst-2); font-size: .95rem; margin: 0; }
+
+.tresc h2 {
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  margin: 2.4rem 0 .7rem; padding-top: 1.5rem; border-top: 1px solid var(--linia);
+}
+.tresc > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.tresc h3 { font-size: 1.1rem; margin: 1.7rem 0 .5rem; color: var(--f800); }
+.tresc ul:not(.lista-ok), .tresc ol { padding-left: 1.35rem; margin: 0 0 1em; }
+.tresc li { margin-bottom: .4rem; }
+.tresc :is(p, ul, ol):last-child { margin-bottom: 0; }
+.tresc code {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: .88em;
+  background: var(--f50); border: 1px solid var(--linia); border-radius: 6px;
+  padding: .15em .4em; overflow-wrap: anywhere;
+}
+
+.panel-dane {
+  background: var(--f50); border: 1px solid var(--linia);
+  border-radius: var(--luk-panel); padding: 1.15rem 1.4rem; margin: 0 0 1.4em;
+}
+.panel-dane p:last-child { margin-bottom: 0; }
+
+/* pary „nazwa i wyjaśnienie” jako lista opisów, nie tabela: dwukolumnowa tabela
+   na telefonie albo przewija się w bok, albo ściska tekst do jednej litery na wiersz */
+.lista-opisow { margin: 0 0 1.4em; }
+.lista-opisow > div {
+  border: 1px solid var(--linia); border-radius: var(--luk);
+  padding: .85rem 1.1rem; margin-bottom: .6rem;
+}
+.lista-opisow > div:last-child { margin-bottom: 0; }
+.lista-opisow dt {
+  font-family: var(--naglowki); font-weight: 700; color: var(--atrament);
+  margin-bottom: .15rem;
+}
+.lista-opisow dd { margin: 0; }
+
 /* ---------- Zawijanie: tablet ---------- */
 @media (max-width: 980px) {
   /* dwie karty w rzędzie, piąta wyśrodkowana pod nimi */
