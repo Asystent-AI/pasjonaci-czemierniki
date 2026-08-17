@@ -16,6 +16,12 @@
 
 <section class="sekcja">
   <div class="szeroko waskie tresc">
+    {{ if .Params.spis }}
+    <nav class="spis" aria-label="Spis treści">
+      <h2>Na tej stronie</h2>
+      {{ .TableOfContents }}
+    </nav>
+    {{ end }}
     {{ .Content }}
   </div>
 </section>

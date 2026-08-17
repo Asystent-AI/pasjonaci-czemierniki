@@ -17,6 +17,13 @@ enableRobotsTXT = true
 [markup.goldmark.renderer]
   unsafe = true
 
+# spis treści podstron tekstowych: tylko nagłówki h2, inaczej rozrasta się
+# do trzech poziomów i przestaje być skrótem
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 2
+  ordered = false
+
 [menus]
   [[menus.main]]
     name = 'Konkurs 2026'

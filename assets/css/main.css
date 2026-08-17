@@ -810,6 +810,23 @@ ul.lista-ok li::before {
   border-radius: var(--luk-panel); padding: 1.15rem 1.4rem; margin: 0 0 1.4em;
 }
 .panel-dane p:last-child { margin-bottom: 0; }
+.panel-akcja { text-align: center; }
+.panel-akcja .przycisk { margin-bottom: .2rem; }
+.stan-akcji { font-size: .95rem; color: var(--tekst-2); }
+
+/* spis treści: skrót po nagłówkach, żeby „jak usunąć moje dane” dało się znaleźć od razu */
+.spis {
+  background: var(--z50); border: 1px solid var(--linia);
+  border-radius: var(--luk-panel); padding: 1.1rem 1.4rem 1.2rem; margin-bottom: 2rem;
+}
+.spis h2 {
+  font-size: 1rem; margin: 0 0 .6rem; padding: 0; border: 0;
+  text-transform: uppercase; letter-spacing: .06em; color: var(--z800);
+}
+.spis ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 1.6rem; }
+.spis li { margin-bottom: .3rem; break-inside: avoid; }
+.spis a { text-decoration: none; }
+.spis a:hover { text-decoration: underline; }
 
 /* pary „nazwa i wyjaśnienie” jako lista opisów, nie tabela: dwukolumnowa tabela
    na telefonie albo przewija się w bok, albo ściska tekst do jednej litery na wiersz */
