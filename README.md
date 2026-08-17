@@ -65,6 +65,36 @@ Identyfikator strony i adres skryptu siedzą w `hugo.toml` (`umamiId`, `umami`),
 w `layouts/baseof.html`. Zdarzenia konwersji wysyła `assets/js/strona.js` funkcją `slad()`:
 `zgloszenie-konkursowe`, `wiadomosc` (z tematem), `telefon`, `e-mail`, `pobranie-pdf`.
 
+**Wypisanie się z liczenia ma przycisk**, nie instrukcję: `#przelacznik-statystyk` na
+`/prywatnosc/` przestawia klucz `umami.disabled` w `localStorage`, a żywy tracker sprawdza
+go przy każdej wysyłce (`g?.getItem("umami.disabled")` w zminifikowanym `script.js`).
+Wcześniejsza wersja polityki kazała otworzyć konsolę i wkleić linijkę JavaScriptu, czego
+na telefonie **nie da się zrobić w ogóle**: przeglądarki mobilne nie mają konsoli, a strona
+jest głównie oglądana z telefonu. Przycisk wykrywa też zablokowany `localStorage` (tryb
+prywatny) i wtedy odsyła do kontaktu, zamiast udawać, że zapamiętał.
+
+## Polityka prywatności
+
+Treść: `content/prywatnosc.md`, układ: `layouts/page.html`. Link w stopce (`baseof.html`,
+rząd `.dol-linki`) i pod każdym z czterech formularzy.
+
+`layouts/page.html` **był martwym fallbackiem** z klasą `.srodek`, której nigdy nie było
+w CSS. Teraz obsługuje podstrony tekstowe: nagłówek jednokolumnowy (`.strona-glowa-solo`),
+treść w `.waskie`, opcjonalny spis treści po `spis: true` we front matterze
+(`[markup.tableOfContents]` w `hugo.toml` ścina go do samych h2). Kolejny regulamin albo
+deklaracja dostępności dostaną to samo bez pisania layoutu.
+
+**Pary „nazwa i wyjaśnienie” składa się jako `<dl class="lista-opisow">`, nie tabelą.**
+Dwukolumnowa tabela na telefonie albo przewija się w bok, albo ściska tekst do jednej
+litery na wiersz; lista opisów jest responsywna z natury i nie wymaga obudowy z `overflow`.
+
+Treść opisuje **stan faktyczny sprawdzony w kodzie**, nie wzorzec z internetu. Przy każdej
+zmianie backendu formularzy albo analityki sprawdź, czy polityka nadal mówi prawdę,
+zwłaszcza o: zapisie adresu IP (`app.py:175` i `:470`), braku cookies, zawartości logów
+(`log.info` z imieniem i nazwiskiem), skanie zgody właściciela wysyłanym w oryginale
+z pełnym EXIF-em (`strona.js:396` omija `zmniejsz()`) i o odbiorcach danych.
+Otwarte decyzje i luki: pamięć agenta `projekt-polityka-prywatnosci.md`.
+
 ## Formularze i poczta
 
 Backend `formularz/app.py` (Flask + gunicorn, kontener `pasjonaci-formularz`, ruch przez
