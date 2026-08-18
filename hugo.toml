@@ -25,6 +25,11 @@ enableRobotsTXT = true
   ordered = false
 
 [menus]
+  # KGW Czemierniki prowadzi na strone glowna Kola: jedna rodzina, dwa adresy
+  [[menus.main]]
+    name = 'KGW Czemierniki'
+    url = 'https://kgw.czemierniki.org/'
+    weight = 5
   [[menus.main]]
     name = 'Konkurs 2026'
     pageRef = '/konkurs'

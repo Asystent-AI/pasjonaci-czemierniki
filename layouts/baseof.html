@@ -36,8 +36,9 @@
     </button>
     <nav class="menu" id="menu">
       {{/* .Page.RelPermalink, nie .PageRef: pageRef nie ma końcowego ukośnika, więc
-           porównanie nigdy nie trafiało i żadna pozycja menu nie dostawała aria-current */}}
-      {{ range site.Menus.main }}<a href="{{ .Page.RelPermalink }}"{{ if eq $.RelPermalink .Page.RelPermalink }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+           porównanie nigdy nie trafiało i żadna pozycja menu nie dostawała aria-current.
+           Pozycja z url (KGW Czemierniki) nie ma .Page i idzie w nowej karcie. */}}
+      {{ range site.Menus.main }}{{ if .Page }}<a href="{{ .Page.RelPermalink }}"{{ if eq $.RelPermalink .Page.RelPermalink }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ else }}<a href="{{ .URL }}" target="_blank" rel="noopener">{{ .Name }}</a>{{ end }}{{ end }}
       <a class="przycisk" href="/dolacz/">Dołącz do Klubu</a>
     </nav>
   </div>
@@ -50,7 +51,7 @@
 <footer class="dol">
   <div class="szeroko dol-siatka">
     <div class="o-klubie">
-      <img src="{{ "odznaka-240.webp" | relURL }}" alt="Odznaka Klubu Pasjonatów Ogrodnictwa Czemierniki" width="96" height="96" loading="lazy">
+      <img class="logo-pion" src="{{ "logotyp-pion.webp" | relURL }}" alt="Logotyp Klubu Pasjonatów Ogrodnictwa Czemierniki: kwiat ciemiernika" width="900" height="1205" loading="lazy">
       <p>Klub Pasjonatów Ogrodnictwa to otwarta inicjatywa działająca przy
       <a href="https://kgw.czemierniki.org/" target="_blank" rel="noopener">Kole Gospodyń
       Wiejskich Czemierniki</a>. Spotkania, konkursy, plenery, lokalna pomoc, wymiana nasionami

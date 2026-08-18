@@ -579,6 +579,10 @@ ul.lista-ok li::before {
 .dwie-kolumny { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
 /* dwie kolumny o różnej długości zostawiały dziurę pod krótszą: kartami wyrównujemy wysokość */
 .dwie-kolumny.kolumny-karty { align-items: stretch; gap: 1.1rem; }
+/* #dolacz (strona KGW): karty równej wysokości, przyciski na wspólnej linii dołu */
+#dolacz .dwie-kolumny { align-items: stretch; }
+#dolacz .droga { display: flex; flex-direction: column; }
+#dolacz .droga > p:last-child { margin-top: auto; padding-top: .4rem; }
 .kolumny-karty > div {
   background: var(--bialy); border: 1px solid var(--linia); box-shadow: var(--cien-1);
   border-radius: var(--luk-panel); padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.2rem, 3vw, 1.8rem);
@@ -726,6 +730,9 @@ ul.lista-ok li::before {
 .dol .o-klubie { display: flex; gap: 1.1rem; align-items: flex-start; }
 /* odznaka jest przezroczysta, a stopka ciemna: krążek bieli robi jej tło */
 .dol .o-klubie img { width: 96px; flex: none; background: var(--bialy); border-radius: 50%; padding: 7px; }
+/* logotyp pionowy (prostokątny) w stopce: biała plakietka zamiast krążka,
+   wyśrodkowana względem tekstu obok */
+.dol .o-klubie .logo-pion { width: 122px; height: auto; border-radius: 14px; padding: 12px 14px; align-self: center; }
 .dol .o-klubie p { font-size: .95rem; margin: 0; }
 .dol ul { list-style: none; margin: 0; padding: 0; }
 .dol li { margin-bottom: .5rem; font-size: .95rem; }
@@ -941,6 +948,7 @@ ul.lista-ok li::before {
   /* numer konta ma spacje: niech łamie się na nich, a nie w środku grupy cyfr */
   .konto b { font-size: 1.05rem; overflow-wrap: normal; }
   .dol .o-klubie img { width: 64px; padding: 5px; }
+  .dol .o-klubie .logo-pion { width: 104px; padding: 9px 11px; }
   .dol-kontakt small { font-size: .88rem; }
   /* nagłówki w kartach schodziły poniżej rozmiaru tekstu podstawowego (17 px) */
   :is(.droga, .swiadczenie) h3 { font-size: 1.12rem; }
