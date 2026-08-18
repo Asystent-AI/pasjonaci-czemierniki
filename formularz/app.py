@@ -475,10 +475,14 @@ def kontakt():
     tytuly = {
         "dolacz": f"Klub Pasjonatów: {imie} chce dołączyć",
         "sponsor": f"WSPÓŁPRACA: {imie} pyta o partnerstwo z Klubem",
+        "kontakt-kgw": f"Wiadomość ze strony KGW od {imie}",
+        "sponsor-kgw": f"WSPÓŁPRACA: {imie} pyta o wsparcie KGW",
     }
     naglowki = {
         "dolacz": ("Nowy chętny do Klubu", "Zapis przez formularz „Dołącz do Klubu”"),
         "sponsor": ("Pytanie o współpracę", "Formularz na stronie „Wesprzyj Klub”"),
+        "kontakt-kgw": ("Wiadomość ze strony KGW", "Formularz kontaktowy na kgw.czemierniki.org"),
+        "sponsor-kgw": ("Pytanie o wsparcie Koła", "Formularz „Wesprzyj nas” na kgw.czemierniki.org"),
     }
     tytul = tytuly.get(temat, f"Wiadomość ze strony Klubu od {imie}")
     naglowek, wprowadzenie = naglowki.get(temat, ("Wiadomość ze strony Klubu", "Formularz kontaktowy"))
