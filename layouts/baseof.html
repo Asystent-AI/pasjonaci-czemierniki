@@ -34,7 +34,7 @@
     <button class="menu-guzik" aria-expanded="false" aria-controls="menu" aria-label="Menu">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-    <nav class="menu" id="menu">
+    <nav class="menu" id="menu" aria-label="Menu główne">
       {{/* .Page.RelPermalink, nie .PageRef: pageRef nie ma końcowego ukośnika, więc
            porównanie nigdy nie trafiało i żadna pozycja menu nie dostawała aria-current.
            Pozycja z url (KGW Czemierniki) nie ma .Page i idzie w nowej karcie. */}}
@@ -51,29 +51,36 @@
 <footer class="dol">
   <div class="szeroko dol-siatka">
     <div class="o-klubie">
-      <img class="logo-pion" src="{{ "logotyp-pion.webp" | relURL }}" alt="Logotyp Klubu Pasjonatów Ogrodnictwa Czemierniki: kwiat ciemiernika" width="640" height="857" loading="lazy">
+      {{/* alt pusty celowo: nazwa Klubu stoi w akapicie obok, więc czytnik ekranu
+           przeczytałby ją dwa razy pod rząd */}}
+      <img class="logo-pion" src="{{ "logotyp-pion.webp" | relURL }}" alt="" width="640" height="857" loading="lazy">
       <p>Klub Pasjonatów Ogrodnictwa to otwarta inicjatywa działająca przy
       <a href="https://kgw.czemierniki.org/" target="_blank" rel="noopener">Kole Gospodyń
-      Wiejskich Czemierniki</a>. Spotkania, konkursy, plenery, lokalna pomoc, wymiana nasionami
-      i sadzonkami. Udział w naszym klubie jest całkowicie darmowy.</p>
+      Wiejskich Czemierniki</a>. Spotkania, konkursy, plenery, wymiana nasionami
+      i sadzonkami. Udział jest całkowicie bezpłatny.</p>
     </div>
     <div>
-      <h4>Odezwij się do nas</h4>
+      <h2>Odezwij się do nas</h2>
       <ul class="dol-kontakt">
         <li><a href="tel:+48795716644">
           <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 3.5h3l1.4 3.6-2 1.5a11.5 11.5 0 0 0 5.2 5.2l1.5-2 3.6 1.4v3a1.8 1.8 0 0 1-2 1.8A15.6 15.6 0 0 1 4.5 5.5a1.8 1.8 0 0 1 1.8-2Z"/></svg></span>
           <span><b>{{ site.Params.telefon }}</b><small>Beata, koordynatorka Klubu</small></span></a></li>
         <li><a href="mailto:{{ site.Params.email }}">
           <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.8 7 7.1 5.2c.7.5 1.6.5 2.2 0L20.2 7"/></svg></span>
-          <span><b>{{ site.Params.email }}</b><small>sprawnie odpowiemy i chętnie pomożemy</small></span></a></li>
+          <span><b>{{ site.Params.email }}</b><small>chętnie odpowiemy i pomożemy</small></span></a></li>
         <li><a href="{{ site.Params.facebook }}" target="_blank" rel="noopener">
           <span class="ikona" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.8 21v-7.6h2.6l.5-3h-3.1V8.5c0-.9.3-1.5 1.6-1.5h1.6V4.3c-.8-.1-1.7-.2-2.5-.2-2.5 0-4.2 1.5-4.2 4.3v2.4H8.6v3h2.7V21"/></svg></span>
           <span><b>Profil KGW na Facebooku</b><small>terminy naszych spotkań i relacje</small></span></a></li>
       </ul>
     </div>
     <div>
-      <h4>Koło Gospodyń Wiejskich Czemierniki</h4>
-      <p class="dane">ul. Zamkowa 11, 21-306 Czemierniki<br>
+      {{/* nagłówek jednowierszowy, tak samo jak w drugiej kolumnie i na stronie Koła:
+           pełna nazwa "Koło Gospodyń Wiejskich Czemierniki" łamała się na dwie linie
+           i spychała całą kolumnę o 17 px niżej niż sąsiednią */}}
+      <h2>Dane Koła</h2>
+      <p class="dane">Koło Gospodyń Wiejskich Czemierniki<br>
+      z siedzibą w Czemiernikach<br>
+      ul. Zamkowa 11, 21-306 Czemierniki<br>
       KRKGW 0615030001<br>
       NIP 5381859198<br>
       REGON 382093920<br>
@@ -83,9 +90,9 @@
   </div>
   <div class="dol-pasek">
     <div class="szeroko">
-      <span>© 2026 Projekt i realizacja <a href="https://www.facebook.com/michalski.bartosz" target="_blank" rel="noopener">Bartosz Michalski</a> dla Koła Gospodyń Wiejskich Czemierniki</span>
-      <nav class="dol-linki">
-        <a href="https://kgw.czemierniki.org/" target="_blank" rel="noopener">Strona KGW</a>
+      <span>© {{ now.Year }} Projekt i realizacja <a href="https://www.facebook.com/michalski.bartosz" target="_blank" rel="noopener">Bartosz Michalski</a> dla Koła Gospodyń Wiejskich Czemierniki</span>
+      <nav class="dol-linki" aria-label="Stopka">
+        <a href="https://kgw.czemierniki.org/" target="_blank" rel="noopener">KGW Czemierniki</a>
         <a href="/konkurs/">Konkurs 2026</a>
         <a href="/wesprzyj/">Wesprzyj nas</a>
         <a href="/dolacz/">Dołącz</a>
