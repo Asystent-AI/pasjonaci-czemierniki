@@ -731,8 +731,9 @@ ul.lista-ok li::before {
 /* odznaka jest przezroczysta, a stopka ciemna: krążek bieli robi jej tło */
 .dol .o-klubie img { width: 96px; flex: none; background: var(--bialy); border-radius: 50%; padding: 7px; }
 /* logotyp pionowy (prostokątny) w stopce: biała plakietka zamiast krążka,
-   wyśrodkowana względem tekstu obok */
-.dol .o-klubie .logo-pion { width: 122px; height: auto; border-radius: 14px; padding: 12px 14px; align-self: center; }
+   wyśrodkowana względem tekstu obok. Plik jest przycięty do zawartości,
+   więc padding plakietki jest jedynym marginesem i znak siedzi w środku. */
+.dol .o-klubie .logo-pion { width: 152px; height: auto; border-radius: 18px; padding: 15px 17px; align-self: center; }
 .dol .o-klubie p { font-size: .95rem; margin: 0; }
 .dol ul { list-style: none; margin: 0; padding: 0; }
 .dol li { margin-bottom: .5rem; font-size: .95rem; }
@@ -948,7 +949,7 @@ ul.lista-ok li::before {
   /* numer konta ma spacje: niech łamie się na nich, a nie w środku grupy cyfr */
   .konto b { font-size: 1.05rem; overflow-wrap: normal; }
   .dol .o-klubie img { width: 64px; padding: 5px; }
-  .dol .o-klubie .logo-pion { width: 104px; padding: 9px 11px; }
+  .dol .o-klubie .logo-pion { width: 120px; padding: 11px 13px; }
   .dol-kontakt small { font-size: .88rem; }
   /* nagłówki w kartach schodziły poniżej rozmiaru tekstu podstawowego (17 px) */
   :is(.droga, .swiadczenie) h3 { font-size: 1.12rem; }
