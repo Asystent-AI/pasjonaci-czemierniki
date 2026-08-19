@@ -209,6 +209,30 @@ Pułapki, które już raz kosztowały czas i wracają przy każdej większej zmi
 
 Kontrasty palety policzone wzorem WCAG — wartości w komentarzach `assets/css/main.css`.
 
+## Stopka: cztery liczby, których nie wolno ruszyć bez pomiaru (19.08.2026)
+
+Stopka obu stron przeszła audyt pięciu soczewek (geometria, typografia, responsywność,
+spójność, dostępność). Utrwalone progi:
+
+* **`margin-top: 6px` na `.logo-pion`** to odległość górnej krawędzi pudełka wiersza od
+  linii wersalika przy `.95rem/1.65`. Zmiana stopnia pisma albo interlinii akapitu
+  w stopce **unieważnia tę liczbę** i logotyp przestaje równać się z tekstem obok.
+* **Próg siatki 1100 px**, nie 980: poniżej 1077 px kolumna kontaktu schodzi pod 278 px
+  i adres e-mail łamie się w środku słowa. W tym samym bloku `.o-klubie` bierze cały
+  rząd (`grid-column: 1 / -1`), inaczej trzeci blok zostaje sierotą z pustą połówką obok.
+* **Próg 460 px** przestawia logotyp nad akapit: niżej na tekst obok plakietki zostaje
+  20–24 znaki w wierszu.
+* **Nagłówki kolumn muszą mieścić się w jednym wierszu.** Dwuwierszowy nagłówek spycha
+  treść swojej kolumny o 17 px niżej niż sąsiedniej. Stąd „Dane Koła”, a pełna nazwa
+  Koła w pierwszym wierszu bloku danych.
+
+Nota o prawach ma `flex: 1 1 22rem; min-width: 0; text-wrap: balance` — dzięki temu kurczy
+się i zawija w sobie, zamiast spychać nawigację do osobnego piętra. Dłuższy zestaw linków
+w stopce jest więc bezpieczny, ale po każdej zmianie sprawdź, czy nawigacja została po prawej.
+
+Nagłówki stopki to `h2` (nie `h4`): na podstronach stopka wchodzi zaraz po `h2` sekcji.
+Selektor w CSS to `.dol h2` i wygrywa swoistością z globalnym `h1, h2, h3, h4`.
+
 ## Zdjęcia: trzy warianty
 
 `narzedzia/assety_www.py` generuje `-d` (1600 px), `-m` (800 px) i `-s` (500 px). Galeria
