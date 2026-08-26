@@ -123,7 +123,7 @@ Nagłówek maila jest jasny, bo logotyp ma ciemny napis na obwodzie.
 ### Maile pisane ręcznie z Gmaila
 
 Oprawa firmowa dla korespondencji wychodzącej ze skrzynki Koła leży poza tym repo,
-w `output/2026-08-17-szablon-mail-kgw.html` (otwierasz w przeglądarce, `Ctrl+A`, `Ctrl+C`,
+w `output/2026-08-17-szablon-mail-pasjonaci.html` (otwierasz w przeglądarce, `Ctrl+A`, `Ctrl+C`,
 wklejasz do okna wiadomości w Gmailu). Repo dostarcza jej **dwa obrazy z publicznych
 adresów**, bo w ręcznym mailu nie ma jak osadzić `cid`:
 
