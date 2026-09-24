@@ -1,5 +1,5 @@
 baseURL = 'https://pasjonaci.czemierniki.org/'
-languageCode = 'pl-pl'
+locale = 'pl-PL'
 defaultContentLanguage = 'pl'
 title = 'Klub Pasjonatów Ogrodnictwa'
 enableRobotsTXT = true
