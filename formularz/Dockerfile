@@ -1,5 +1,6 @@
-FROM python:3.13-alpine
-RUN pip install --no-cache-dir flask==3.1.* gunicorn==23.*
+FROM python:3.15-alpine
+RUN apk update && apk upgrade --no-cache \
+    && pip install --no-cache-dir --upgrade pip "flask==3.1.*" "gunicorn==27.*"
 WORKDIR /app
 COPY app.py logo-mail.png ./
 VOLUME /dane
