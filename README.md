@@ -1,42 +1,25 @@
 # pasjonaci.czemierniki.org
 
-Hugo (jedna binarka, bez npm) + Sveltia CMS (panel dla Beaty, działa na tablecie i telefonie)
-+ Caddy na Hetznerze + Umami na statystyki.
+Strona Klubu Pasjonatów Ogrodnictwa przy KGW Czemierniki, wzajemnie podlinkowana z siostrzaną witryną Koła ([kgw-czemierniki](https://github.com/Asystent-AI/kgw-czemierniki), `https://kgw.czemierniki.org/`). Hugo (jedna binarka, bez npm) + Sveltia CMS (etap 2: panel dla Beaty na tablecie i telefonie) + Traefik / Coolify (`nginx:alpine` na Hetznerze) + Umami na statystyki.
 
-## Praca lokalna
+## Praca lokalna i publikacja
 
-```bash
-../.bin/hugo.exe server
+```powershell
+# z katalogu strona/:
+..\.bin\hugo.exe server --port 1313
+# albo z katalogu nadrzędnego KGW Czemierniki:
+.bin\hugo.exe server --source strona --port 1313
 ```
 
-Podgląd na http://localhost:1313. Binarka Hugo leży w `.bin/` — wersja przypięta na **0.164.0**,
-żeby build za rok użył dokładnie tego samego pliku.
+Podgląd na http://localhost:1313 (wpis "pasjonaci" w `.claude/launch.json`). Binarka Hugo leży w `.bin/` katalogu nadrzędnego, wersja przypięta na **0.164.0**, żeby build za rok użył dokładnie tego samego pliku. Pliki PDF konkursu (`regulamin-2026.pdf`, `karta-zgloszeniowa-2026.pdf`) leżą w `static/dokumenty/`.
 
-Publikacja:
+Publikacja na serwer (kontener `pasjonaci-czemierniki` serwujący `/var/www/pasjonaci` za `coolify-proxy` Traefika, certyfikat Let's Encrypt, bez restartu kontenera):
 
-```bash
-../.bin/hugo.exe --destination public && rsync -avz --delete public/ user@serwer:/var/www/pasjonaci/
+```powershell
+cd strona
+..\.bin\hugo.exe --quiet --destination public --baseURL https://pasjonaci.czemierniki.org/
+tar czf - -C public . | ssh <serwer> "tar xzf - -C /var/www/pasjonaci"
 ```
-
-## Zanim wejdzie na serwer
-
-1. Skopiuj do `static/dokumenty/` dwa pliki z `fg.pl`:
-   - `REGULAMIN_KONKURSU_OGRODNICZEGO_2026.pdf` → `regulamin-2026.pdf`
-   - `ZALACZNIK_NR_1.pdf` → `karta-zgloszeniowa-2026.pdf`
-2. Sprawdź linki na `/konkurs/` — bez tych plików prowadzą donikąd.
-
-## Caddy
-
-```
-pasjonaci.czemierniki.org {
-    root * /var/www/pasjonaci
-    encode gzip
-    file_server
-    header /css/* Cache-Control "public, max-age=31536000, immutable"
-}
-```
-
-Certyfikat Caddy załatwia sam. `systemctl reload caddy`.
 
 ## Umami (statystyki, bez ciasteczek i bez banera zgody) — WDROŻONE 15.08.2026
 
