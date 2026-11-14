@@ -134,7 +134,7 @@ Wdrożenie backendu (kontener stoi na `docker run`, nie na compose, więc labele
 trzeba podać ponownie przy odtwarzaniu):
 
 ```bash
-scp formularz/app.py formularz/logo-mail.png formularz/Dockerfile root@204.168.196.86:/opt/pasjonaci-formularz/
+scp formularz/app.py formularz/logo-mail.png formularz/Dockerfile <serwer>:/opt/pasjonaci-formularz/
 ```
 
 ## Sveltia CMS (panel dla Beaty) — etap 2
@@ -227,15 +227,16 @@ W hero i w nagłówkach podstron `sizes` na telefonie **celowo zaniża slot** (`
 
 ## Wdrożone 10.08.2026 (Coolify/Traefik, nie Caddy)
 
-Serwer: root@204.168.196.86 (agent-ai). Portami 80/443 rządzi coolify-proxy (Traefik),
+Serwer: `<serwer>` (agent-ai). Portami 80/443 rządzi coolify-proxy (Traefik),
 więc strona chodzi jako kontener `pasjonaci-czemierniki` (nginx:alpine, restart unless-stopped,
 sieć `coolify`, labele Traefik z certresolver=letsencrypt) serwujący /var/www/pasjonaci.
 
 Aktualizacja strony (bez restartu kontenera):
 
-```bash
-cd strona && ../.bin/hugo.exe --quiet --destination public --baseURL https://pasjonaci.czemierniki.org/
-tar czf - -C public . | ssh root@204.168.196.86 "tar xzf - -C /var/www/pasjonaci"
+```powershell
+cd strona
+..\.bin\hugo.exe --quiet --destination public --baseURL https://pasjonaci.czemierniki.org/
+tar czf - -C public . | ssh <serwer> "tar xzf - -C /var/www/pasjonaci"
 ```
 
 Kontener stoi poza panelem Coolify (Traefik czyta labele z sieci coolify). Działa i przeżyje
